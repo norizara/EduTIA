@@ -1,28 +1,41 @@
-import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log("Seeding database...");
-
+  await prisma.profile.deleteMany();
   await prisma.course.deleteMany();
   await prisma.user.deleteMany();
 
   // ===== USERS =====
-  await prisma.user.createMany({
+  const admin = await prisma.user.create({
+    data: {
+      email: "admin@edutia.com",
+      password: "hashed_admin_password",
+      role: "ADMIN",
+    },
+  });
+
+  const student = await prisma.user.create({
+    data: {
+      email: "student@edutia.com",
+      password: "hashed_student_password",
+      role: "EDUCATEE",
+    },
+  });
+
+  // ===== PROFILES =====
+  await prisma.profile.createMany({
     data: [
       {
-        email: "admin@edutia.com",
-        password: "hashed_admin_password",
-        role: "ADMIN",
+        userId: admin.id,
         gender: "MALE",
+        bio: "Platform administrator",
       },
       {
-        email: "student@edutia.com",
-        password: "hashed_student_password",
-        role: "EDUCATEE",
+        userId: student.id,
         gender: "FEMALE",
+        bio: "Learner interested in technology",
       },
     ],
   });
@@ -37,7 +50,6 @@ async function main() {
         category: "Data Science",
         level: "BEGINNER",
         duration: 180,
-        thumbnailUrl: "/public/thumbnail.jpeg",
         isPublished: true,
       },
       {
@@ -47,7 +59,6 @@ async function main() {
         category: "Web Development",
         level: "INTERMEDIATE",
         duration: 240,
-        thumbnailUrl: "/public/thumbnail.jpeg",
         isPublished: true,
       },
       {
@@ -56,13 +67,12 @@ async function main() {
         category: "Machine Learning",
         level: "ADVANCED",
         duration: 300,
-        thumbnailUrl: "/public/thumbnail.jpeg",
         isPublished: false,
       },
     ],
   });
 
-  console.log("Seeding finished successfully");
+  console.log("Seeding completed.");
 }
 
 main()
