@@ -61,7 +61,7 @@ export async function PUT(req: Request, context: Context) {
   }
 }
 
-export async function DELETE(req: Request, context: Context) {
+export async function DELETE(_: Request, context: Context) {
   try {
     const { id } = await context.params;
     const user = await getUserFromCookie();

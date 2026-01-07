@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export default function Page() {
   const router = useRouter();
@@ -12,6 +13,8 @@ export default function Page() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (isLoading) return;
+
     setError(null);
     setIsLoading(true);
 
@@ -22,17 +25,24 @@ export default function Page() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
+        credentials: "include",
       });
 
-      const data = await res.json();
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
 
       if (!res.ok) {
         setError(data.message || "Login failed");
+        return;
       }
 
-      // There is a change of bug, if no validation
-      router.push("/");
-    } catch (err) {
+      if (data.role === "ADMIN") router.push("/admin");
+      else router.push("/");
+    } catch {
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
@@ -115,12 +125,12 @@ export default function Page() {
 
           <p className="mt-10 text-center text-sm/6 text-gray-500">
             Not a member?{" "}
-            <a
-              href="#"
+            <Link
+              href="/signup"
               className="font-semibold text-indigo-600 hover:text-indigo-500"
             >
               Sign up now
-            </a>
+            </Link>
           </p>
         </div>
       </div>

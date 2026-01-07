@@ -4,8 +4,7 @@ import bcrypt from "bcryptjs";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { email, password, passwordConfirmation, role } = body;
+    const { email, password, passwordConfirmation, role } = await req.json();
 
     if (!email || !password || !passwordConfirmation) {
       return NextResponse.json(
@@ -14,8 +13,16 @@ export async function POST(req: Request) {
       );
     }
 
+    const allowedRoles = ["EDUCATEE", "CORPORATION"] as const;
+
+    if (role && !allowedRoles.includes(role)) {
+      return NextResponse.json({ message: "Invalid role" }, { status: 400 });
+    }
+
+    const normalizedEmail = email.toLowerCase().trim();
+
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (existingUser) {
@@ -37,7 +44,7 @@ export async function POST(req: Request) {
     const user = await prisma.$transaction(async (tx) => {
       const createdUser = await tx.user.create({
         data: {
-          email,
+          email: normalizedEmail,
           password: hashedPassword,
           role: role ?? "EDUCATEE",
         },

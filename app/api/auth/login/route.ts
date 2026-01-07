@@ -14,23 +14,20 @@ export async function POST(req: Request) {
       );
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
     const user = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (!user) {
-      return NextResponse.json({ message: "User not found" }, { status: 401 });
+      return NextResponse.json(
+        { message: "Invalid credentials" },
+        { status: 401 }
+      );
     }
 
     const isValid = await bcrypt.compare(password, user.password);
-
-    // Debug login attempt
-    console.log("Login attempt:", {
-      email,
-      passwordProvided: password,
-      hashedPasswordInDB: user.password,
-      isValid,
-    });
 
     if (!isValid) {
       return NextResponse.json(
@@ -54,7 +51,13 @@ export async function POST(req: Request) {
     );
 
     // cookie approach
-    const response = NextResponse.json({ success: true });
+    const response = NextResponse.json({
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      },
+    });
 
     response.cookies.set("token", token, {
       httpOnly: true,
