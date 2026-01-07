@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUserFromCookie } from "@/lib/auth";
+import { requireLogin } from "@/lib/guard";
 
 export async function GET() {
   try {
-    const user = await getUserFromCookie();
-    if (!user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireLogin();
+    if (auth.error) return auth.error;
+
+    const user = auth.user;
     const profile = await prisma.profile.findUnique({
       where: { userId: user.userId },
     });
@@ -30,11 +30,10 @@ export async function GET() {
 
 export async function PUT(req: Request) {
   try {
-    const user = await getUserFromCookie();
+    const auth = await requireLogin();
+    if (auth.error) return auth.error;
 
-    if (!user) {
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
+    const user = auth.user;
 
     const body = await req.json();
     const { email, name, dob, gender, pictureUrl, bio } = body;
