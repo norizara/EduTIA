@@ -81,7 +81,8 @@ export default function Navbar() {
         </div>
 
         {/* Mobile Button */}
-        <div className="flex lg:hidden">
+        <div className="flex lg:hidden gap-3">
+          <MagnifyingGlassIcon className="size-6" />
           <button
             type="button"
             onClick={() => setMobileMenuOpen(true)}
@@ -276,12 +277,25 @@ export default function Navbar() {
                 </a>
               </div>
               <div className="py-6">
-                <a
-                  href="#"
+                <Link
+                  href="/profile"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
-                  Log in
-                </a>
+                  Profile
+                </Link>
+                <button
+                  onClick={async () => {
+                    setLoadingUser(true);
+                    await fetch("/api/auth/logout", {
+                      method: "POST",
+                      credentials: "include",
+                    });
+                    window.location.href = "/";
+                  }}
+                  className="w-full text-left -mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                >
+                  Logout
+                </button>
               </div>
             </div>
           </div>
