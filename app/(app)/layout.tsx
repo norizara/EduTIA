@@ -1,5 +1,6 @@
 import "@/app/globals.css";
-import Navbar from "@/component/Navbar";
+import Header from "@/component/Header";
+import Footer from "@/component/Footer";
 
 export default function RootLayout({
   children,
@@ -12,8 +13,9 @@ export default function RootLayout({
         <title>EduTIA</title>
       </head>
       <body className="h-full">
-        <Navbar />
+        <Header />
         {children}
+        <Footer></Footer>
       </body>
     </html>
   );

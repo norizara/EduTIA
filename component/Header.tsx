@@ -41,7 +41,7 @@ type User = {
   imageUrl?: string;
 };
 
-export default function Navbar() {
+export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const [loadingUser, setLoadingUser] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -74,14 +74,14 @@ export default function Navbar() {
           <a href="#">
             <img
               alt="EduTIA Logo"
-              src="/blue-edutia-logo.svg"
+              src="/logo/blue.svg"
               className="h-6 w-auto"
             />
           </a>
         </div>
 
         {/* Mobile Button */}
-        <div className="flex lg:hidden gap-3">
+        <div className="flex lg:hidden gap-5">
           <MagnifyingGlassIcon className="size-6" />
           <button
             type="button"
@@ -220,7 +220,7 @@ export default function Navbar() {
             <a href="#" className="-m-1.5 p-1.5">
               <img
                 alt="EduTIA Logo"
-                src="/blue-edutia-logo.svg"
+                src="/logo/blue.svg"
                 className="h-6 w-auto"
               />
             </a>
