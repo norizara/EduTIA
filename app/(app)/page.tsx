@@ -13,8 +13,6 @@ import {
   Quote,
 } from "lucide-react";
 
-const ACCENT_COLOR = "#2169EA";
-
 // --- Data for specific courses requested ---
 const availableCourses = [
   {
@@ -152,10 +150,7 @@ export default function Homepage() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-                  <button
-                    className="px-8 py-4 rounded-xl font-bold text-white text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto"
-                    style={{ backgroundColor: ACCENT_COLOR }}
-                  >
+                  <button className="px-8 py-4 rounded-xl font-bold text-white text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all w-full sm:w-auto bg-eduBlue">
                     Explore Courses
                   </button>
                   <Link
@@ -209,10 +204,7 @@ export default function Homepage() {
           </div>
         </section>
 
-        <section
-          className="py-20 text-white"
-          style={{ backgroundColor: ACCENT_COLOR }}
-        >
+        <section className="py-20 text-white bg-eduBlue">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-12">
               <h2 className="text-3xl font-bold mb-4">Core Features</h2>
