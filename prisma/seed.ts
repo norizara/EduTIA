@@ -1,11 +1,11 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
+import { Category } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-const prisma = new PrismaClient();
-
 async function main() {
-  await prisma.profile.deleteMany();
   await prisma.course.deleteMany();
+  await prisma.category.deleteMany();
+  await prisma.profile.deleteMany();
   await prisma.user.deleteMany();
 
   // ===== USERS =====
@@ -80,31 +80,50 @@ async function main() {
   });
 
   // ===== CATEGORY =====
-  const categories = await Promise.all([
+  const categories: Category[] = await Promise.all([
     prisma.category.upsert({
       where: { slug: "development" },
       update: {},
-      create: { name: "Development", slug: "development" },
+      create: {
+        name: "Development",
+        slug: "development",
+      },
     }),
+
     prisma.category.upsert({
       where: { slug: "data-science" },
       update: {},
-      create: { name: "Data Science", slug: "data-science" },
+      create: {
+        name: "Data Science",
+        slug: "data-science",
+      },
     }),
+
     prisma.category.upsert({
       where: { slug: "design" },
       update: {},
-      create: { name: "Design", slug: "design" },
+      create: {
+        name: "Design",
+        slug: "design",
+      },
     }),
+
     prisma.category.upsert({
       where: { slug: "it-software" },
       update: {},
-      create: { name: "IT & Software", slug: "it-software" },
+      create: {
+        name: "IT & Software",
+        slug: "it-software",
+      },
     }),
+
     prisma.category.upsert({
       where: { slug: "business" },
       update: {},
-      create: { name: "Business", slug: "business" },
+      create: {
+        name: "Business",
+        slug: "business",
+      },
     }),
   ]);
 
