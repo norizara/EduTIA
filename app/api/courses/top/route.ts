@@ -9,8 +9,6 @@ export async function GET(req: Request) {
     const courses = await prisma.course.findMany({
       where: {
         isPublished: true,
-        // Optional credibility guard (enable later if you want)
-        // numberOfRate: { gt: 0 },
       },
       orderBy: [{ rate: "desc" }, { numberOfRate: "desc" }, { title: "asc" }],
       take: limit,
