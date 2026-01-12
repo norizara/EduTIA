@@ -1,10 +1,16 @@
 import { prisma } from "@/lib/prisma";
-import { Category } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 async function main() {
+  // ===== CLEAN DATABASE =====
+  await prisma.certificate.deleteMany();
+  await prisma.enrollment.deleteMany();
+  await prisma.workshopRegistration.deleteMany();
+  await prisma.workshop.deleteMany();
+  await prisma.module.deleteMany();
   await prisma.course.deleteMany();
   await prisma.category.deleteMany();
+  await prisma.corporationVerification.deleteMany();
   await prisma.profile.deleteMany();
   await prisma.user.deleteMany();
 
@@ -42,92 +48,72 @@ async function main() {
   });
 
   // ===== PROFILES =====
-  await prisma.profile.createMany({
+  const adminProfile = await prisma.profile.create({
+    data: {
+      userId: admin.id,
+      gender: "MALE",
+      bio: "Platform administrator",
+    },
+  });
+
+  const studentProfile = await prisma.profile.create({
+    data: {
+      userId: student.id,
+      gender: "FEMALE",
+      pictureUrl: "/avatars/female.svg",
+      bio: "Learner interested in technology",
+    },
+  });
+
+  const corpProfile1 = await prisma.profile.create({
+    data: {
+      userId: corp1.id,
+      companyName: "TechCorp Solutions",
+      companyWebsite: "https://techcorp.com",
+      bio: "Enterprise technology solutions provider",
+    },
+  });
+
+  const corpProfile2 = await prisma.profile.create({
+    data: {
+      userId: corp2.id,
+      companyName: "Innovate IO",
+      companyWebsite: "https://innovate.io",
+      bio: "HR and talent development company",
+    },
+  });
+
+  // ===== CORPORATION VERIFICATION =====
+  await prisma.corporationVerification.createMany({
     data: [
       {
-        userId: admin.id,
-        gender: "MALE",
-        bio: "Platform administrator",
+        profileId: corpProfile1.id,
+        status: "VERIFIED",
+        verifiedAt: new Date(),
       },
       {
-        userId: student.id,
-        gender: "FEMALE",
-        pictureUrl: "/avatars/female.svg",
-        bio: "Learner interested in technology",
+        profileId: corpProfile2.id,
+        status: "PENDING",
       },
     ],
   });
 
-  await prisma.profile.createMany({
+  // ===== CATEGORIES =====
+  const categories = await prisma.category.createMany({
     data: [
-      {
-        userId: corp1.id,
-        companyName: "TechCorp Solutions",
-        companyWebsite: "https://techcorp.com",
-        verificationDocUrl: "/docs/techcorp-verification.pdf",
-        corpStatus: "VERIFIED",
-        bio: "Enterprise technology solutions provider",
-      },
-      {
-        userId: corp2.id,
-        companyName: "Innovate IO",
-        companyWebsite: "https://innovate.io",
-        verificationDocUrl: "/docs/innovate-verification.pdf",
-        corpStatus: "PENDING",
-        bio: "HR and talent development company",
-      },
+      { name: "Development", slug: "development" },
+      { name: "Data Science", slug: "data-science" },
+      { name: "Design", slug: "design" },
+      { name: "IT & Software", slug: "it-software" },
+      { name: "Business", slug: "business" },
     ],
+    skipDuplicates: true,
   });
 
-  // ===== CATEGORY =====
-  const categories: Category[] = await Promise.all([
-    prisma.category.upsert({
-      where: { slug: "development" },
-      update: {},
-      create: {
-        name: "Development",
-        slug: "development",
-      },
-    }),
-
-    prisma.category.upsert({
-      where: { slug: "data-science" },
-      update: {},
-      create: {
-        name: "Data Science",
-        slug: "data-science",
-      },
-    }),
-
-    prisma.category.upsert({
-      where: { slug: "design" },
-      update: {},
-      create: {
-        name: "Design",
-        slug: "design",
-      },
-    }),
-
-    prisma.category.upsert({
-      where: { slug: "it-software" },
-      update: {},
-      create: {
-        name: "IT & Software",
-        slug: "it-software",
-      },
-    }),
-
-    prisma.category.upsert({
-      where: { slug: "business" },
-      update: {},
-      create: {
-        name: "Business",
-        slug: "business",
-      },
-    }),
-  ]);
-
-  const categoryMap = Object.fromEntries(categories.map((c) => [c.slug, c.id]));
+  const categoryList = await prisma.category.findMany();
+  const categoryMap = Object.fromEntries(
+    categoryList.map((c) => [c.slug, c.id])
+  );
 
   // ===== COURSES =====
   await prisma.course.createMany({
@@ -188,14 +174,12 @@ async function main() {
       },
     ],
   });
-
-  console.log("Seeding completed.");
 }
 
 main()
   .catch((error) => {
-    console.error("Seeding error:", error);
-    throw error;
+    console.error("❌ Seeding error:", error);
+    process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
