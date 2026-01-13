@@ -75,7 +75,7 @@ export default function Page() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-eduBlue sm:text-sm/6"
                 />
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function Page() {
                 <div className="text-sm">
                   <a
                     href="#"
-                    className="font-semibold text-indigo-600 hover:text-indigo-500"
+                    className="font-semibold text-eduBlue hover:text-eduBlue"
                   >
                     Forgot password?
                   </a>
@@ -101,7 +101,7 @@ export default function Page() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                  className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-eduBlue sm:text-sm/6"
                 />
               </div>
             </div>
@@ -116,10 +116,18 @@ export default function Page() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex w-full justify-center rounded-md bg-eduBlue px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-eduBlue/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eduBlue"
               >
                 {isLoading ? "Logging in..." : "Log in"}
               </button>
+            </div>
+            <div>
+              <Link
+                href={"/"}
+                className="flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-black shadow-x focus-visible:outline-2 focus-visible:outline-offset-2"
+              >
+                Continue as Guest
+              </Link>
             </div>
           </form>
 
@@ -127,7 +135,7 @@ export default function Page() {
             Not a member?{" "}
             <Link
               href="/signup"
-              className="font-semibold text-indigo-600 hover:text-indigo-500"
+              className="font-semibold text-eduBlue hover:text-eduBlue"
             >
               Sign up now
             </Link>

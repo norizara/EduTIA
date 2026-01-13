@@ -163,7 +163,7 @@ export default function HeaderClient({
               Apply Jobs
             </a>
             <a href="#" className="text-sm font-semibold text-gray-900">
-              About
+              My Learnings
             </a>
             <div className="min-w-10 flex items-center justify-end">
               {loadingUser && (
