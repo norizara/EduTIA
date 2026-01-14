@@ -143,14 +143,14 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
                   >
                     Explore Courses
                   </Link>
-                  {!user ? (
+                  {!user && (
                     <Link
                       href="/login"
                       className="px-8 py-4 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
                     >
                       Log in
                     </Link>
-                  ) : null}
+                  )}
                 </div>
               </div>
 

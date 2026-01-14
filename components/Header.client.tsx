@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
@@ -24,13 +24,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-
-type User = {
-  userId: string;
-  email: string;
-  role: string;
-  imageUrl?: string;
-};
+import { getCurrentUser } from "@/lib/auth";
 
 type CategoryUI = {
   id: string;
@@ -38,14 +32,13 @@ type CategoryUI = {
   slug: string;
 };
 
-export default function HeaderClient({
-  categories,
-}: {
+type HeaderProps = {
+  user: Awaited<ReturnType<typeof getCurrentUser>>;
   categories: CategoryUI[];
-}) {
+};
+
+export default function HeaderClient({ user, categories }: HeaderProps) {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [loadingUser, setLoadingUser] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [query, setQuery] = useState("");
   const categoriesUI = (categories ?? []).map((c: CategoryUI) => ({
@@ -53,30 +46,6 @@ export default function HeaderClient({
     name: c.name,
     href: `/courses?category=${c.slug}`,
   }));
-
-  useEffect(() => {
-    async function loadUser() {
-      try {
-        const res = await fetch("/api/auth/me", {
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          setUser(null);
-          return;
-        }
-
-        const data = await res.json();
-        setUser(data.user ?? null);
-      } catch {
-        setUser(null);
-      } finally {
-        setLoadingUser(false);
-      }
-    }
-
-    loadUser();
-  }, []);
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -166,11 +135,7 @@ export default function HeaderClient({
               My Learnings
             </a>
             <div className="min-w-10 flex items-center justify-end">
-              {loadingUser && (
-                <div className="size-8 rounded-full bg-gray-200 animate-pulse" />
-              )}
-
-              {!loadingUser && !user && (
+              {!user && (
                 <Link
                   href="/login"
                   className="text-sm font-semibold text-gray-900 whitespace-nowrap"
@@ -179,11 +144,11 @@ export default function HeaderClient({
                 </Link>
               )}
 
-              {!loadingUser && user && (
+              {user && (
                 <Menu as="div" className="relative">
                   <MenuButton className="relative flex items-center rounded-full focus:outline-none">
                     <img
-                      src={user.imageUrl || "/avatars/male.svg"}
+                      src={user.profile?.pictureUrl || "/avatars/male.svg"}
                       className="size-8 rounded-full"
                       alt="Avatar"
                     />
@@ -202,7 +167,6 @@ export default function HeaderClient({
                     <MenuItem>
                       <button
                         onClick={async () => {
-                          setLoadingUser(true);
                           await fetch("/api/auth/logout", {
                             method: "POST",
                             credentials: "include",
@@ -298,7 +262,6 @@ export default function HeaderClient({
                 </Link>
                 <button
                   onClick={async () => {
-                    setLoadingUser(true);
                     await fetch("/api/auth/logout", {
                       method: "POST",
                       credentials: "include",
