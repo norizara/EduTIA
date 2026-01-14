@@ -1,7 +1,6 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
-import { AuthPayload } from "./types";
 
 export async function getCurrentUser() {
   const cookieStore = await cookies();
