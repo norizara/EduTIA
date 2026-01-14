@@ -40,9 +40,9 @@ export async function GET(
 
     return NextResponse.json(nextItem);
   } catch (error) {
-    console.error(error);
+    console.error("Get resume course item error:", error);
     return NextResponse.json(
-      { message: "Failed to fetch resume item" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }

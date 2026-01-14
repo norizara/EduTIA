@@ -9,9 +9,9 @@ export async function GET() {
 
     return NextResponse.json(paths);
   } catch (error) {
-    console.error(error);
+    console.error("Get learning paths error:", error);
     return NextResponse.json(
-      { message: "Failed to fetch learning paths" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }

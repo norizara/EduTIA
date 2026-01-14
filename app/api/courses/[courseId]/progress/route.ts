@@ -19,9 +19,9 @@ export async function GET(
 
     return NextResponse.json(enrollment?.progressPercent);
   } catch (error) {
-    console.error(error);
+    console.error("Get enrollment progress error:", error);
     return NextResponse.json(
-      { message: "Failed to fetch enrollment progress" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }

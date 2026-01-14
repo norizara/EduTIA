@@ -3,19 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { requireAdminUser } from "@/lib/auth";
 import { slugify } from "@/lib/slugify";
 
-export async function GET() {
-  const categories = await prisma.category.findMany({
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-    },
-    orderBy: { name: "asc" },
-  });
-
-  return NextResponse.json(categories);
-}
-
 export async function POST(req: Request) {
   try {
     await requireAdminUser();
@@ -39,9 +26,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json(category, { status: 201 });
   } catch (error) {
-    console.error(error);
+    console.error("Create category error:", error);
     return NextResponse.json(
-      { message: "Failed to create category" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }

@@ -49,7 +49,7 @@ export async function POST(
 
     return NextResponse.json({ message: "Module added" }, { status: 201 });
   } catch (error) {
-    console.error(error);
+    console.error("Create module error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

@@ -37,9 +37,9 @@ export async function GET(req: Request) {
       data: courses,
     });
   } catch (error) {
-    console.error("[COURSES_TOP]", error);
+    console.error("Get top courses error:", error);
     return NextResponse.json(
-      { message: "Failed to fetch top courses" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }

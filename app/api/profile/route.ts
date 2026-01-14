@@ -17,9 +17,9 @@ export async function GET() {
     }
     return NextResponse.json({ profile });
   } catch (error) {
-    console.error(error);
+    console.error("Get profile error:", error);
     return NextResponse.json(
-      { message: "Failed to fetch profile" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }
@@ -64,9 +64,9 @@ export async function PUT(req: Request) {
       profile: updatedProfile,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Update profile error:", error);
     return NextResponse.json(
-      { message: "Failed to update profile" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }

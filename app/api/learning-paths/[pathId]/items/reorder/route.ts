@@ -2,10 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 import { requireAdminUser } from "@/lib/auth";
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { pathId: string } }
-) {
+export async function PATCH(req: Request) {
   try {
     await requireAdminUser();
 

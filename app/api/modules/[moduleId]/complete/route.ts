@@ -99,7 +99,7 @@ export async function POST(
       );
     }
 
-    console.error(error);
+    console.error("Complete course error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
       { status: 500 }

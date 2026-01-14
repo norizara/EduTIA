@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
 type CategoryUI = {
   id: string;
@@ -7,9 +8,15 @@ type CategoryUI = {
 };
 
 export default async function Footer() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/categories`);
+  const categories: CategoryUI[] = await prisma.category.findMany({
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+    },
+    orderBy: { name: "asc" },
+  });
 
-  const categories: CategoryUI[] = await res.json();
   const categoriesUI = (categories ?? []).map((category) => ({
     id: category.id,
     name: category.name,

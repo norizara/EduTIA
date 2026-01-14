@@ -21,9 +21,9 @@ export async function GET(_: Request, { params }: Context) {
 
     return NextResponse.json(course);
   } catch (error) {
-    console.error(error);
+    console.error("Get course error:", error);
     return NextResponse.json(
-      { message: "Failed to fetch course" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }
@@ -65,9 +65,9 @@ export async function PUT(req: Request, { params }: Context) {
       );
     }
 
-    console.error(error);
+    console.error("Update course error:", error);
     return NextResponse.json(
-      { message: "Failed to update course" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }
@@ -100,9 +100,9 @@ export async function DELETE(_: Request, { params }: Context) {
       );
     }
 
-    console.error(error);
+    console.error("Delete course error:", error);
     return NextResponse.json(
-      { message: "Failed to delete course" },
+      { message: "Internal server error" },
       { status: 500 }
     );
   }
