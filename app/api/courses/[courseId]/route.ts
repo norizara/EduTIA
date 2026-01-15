@@ -6,6 +6,7 @@ type Context = {
   params: { courseId: string };
 };
 
+// maybe not needed
 export async function GET(_: Request, { params }: Context) {
   try {
     const course = await prisma.course.findUnique({

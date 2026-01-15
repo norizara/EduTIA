@@ -152,6 +152,8 @@ async function main() {
         level: "BEGINNER",
         duration: 160,
         isPublished: true,
+        avgRating: 5.0,
+        reviewCount: 10,
       },
       {
         title: "System Design for Software Engineers",
@@ -161,6 +163,8 @@ async function main() {
         level: "ADVANCED",
         duration: 260,
         isPublished: true,
+        avgRating: 3.0,
+        reviewCount: 8,
       },
       {
         title: "UI/UX Design Basics",

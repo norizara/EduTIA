@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
 
+// maybe not needed
 export async function GET() {
   try {
     const user = await requireUser();

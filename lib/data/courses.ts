@@ -6,13 +6,13 @@ export async function getCourses(params: URLSearchParams): Promise<CourseUI[]> {
   const search = params.get("search")?.trim();
   const keywords = search ? search.split(/\s+/) : [];
 
-  const categories = params.getAll("category");
+  const category = params.get("category");
   const levels = params.getAll("level") as CourseLevel[];
   const durations = params.getAll("duration");
 
-  const avgRatingParam = params.get("avgRating");
-  const avgRating =
-    avgRatingParam !== null ? Number(avgRatingParam) : undefined;
+  const rating = params.get("rating")
+    ? Number(params.get("rating"))
+    : undefined;
 
   const sort = params.get("sort");
 
@@ -43,13 +43,11 @@ export async function getCourses(params: URLSearchParams): Promise<CourseUI[]> {
           ],
         })),
 
-        ...(categories.length
+        ...(category
           ? [
               {
                 category: {
-                  slug: {
-                    in: categories,
-                  },
+                  slug: category,
                 },
               },
             ]
@@ -84,11 +82,11 @@ export async function getCourses(params: URLSearchParams): Promise<CourseUI[]> {
             ]
           : []),
 
-        ...(avgRating !== undefined
+        ...(rating !== undefined
           ? [
               {
                 avgRating: {
-                  gte: avgRating,
+                  gte: rating,
                 },
               },
             ]

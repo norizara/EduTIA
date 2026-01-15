@@ -39,7 +39,9 @@ export default function LearningPaths({ learningPaths }: LearningPathsProps) {
             <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6">
               <BookOpen className="w-10 h-10 text-slate-300" />
             </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">No paths published yet</h3>
+            <h3 className="text-xl font-bold text-slate-900 mb-2">
+              No paths published yet
+            </h3>
           </div>
         )}
 
@@ -49,7 +51,9 @@ export default function LearningPaths({ learningPaths }: LearningPathsProps) {
             <div className="mb-4 transform rotate-3">
               <Rocket className="w-8 h-8 text-slate-300" />
             </div>
-            <h3 className="text-lg font-bold text-slate-300">More Paths Await</h3>
+            <h3 className="text-lg font-bold text-slate-300">
+              More Paths Await
+            </h3>
           </div>
         )}
       </div>

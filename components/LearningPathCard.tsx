@@ -7,17 +7,25 @@ type LearningPathWithItems = LearningPath & {
   })[];
 };
 
-export default function LearningPathCard({ learningPath }: { learningPath: LearningPathWithItems }) {
-  const totalDurationMinutes = learningPath.items.reduce((acc, item) => acc + item.course.duration, 0);
+export default function LearningPathCard({
+  learningPath,
+}: {
+  learningPath: LearningPathWithItems;
+}) {
+  const totalDurationMinutes = learningPath.items.reduce(
+    (acc, item) => acc + item.course.duration,
+    0
+  );
   const totalHours = Math.max(1, Math.round(totalDurationMinutes / 60));
   const courseCount = learningPath.items.length;
 
-  const firstCourseThumbnail = learningPath.items[0]?.course.thumbnailUrl || "/thumbnail.jpeg";
+  const firstCourseThumbnail =
+    learningPath.items[0]?.course.thumbnailUrl || "/thumbnail.jpeg";
 
   return (
     <Link
       href={`/path/${learningPath.id}`}
-      className="group relative block w-full h-[280px] rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
+      className="group relative block w-full h-70 rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
     >
       <div className="absolute inset-0">
         <img
@@ -28,21 +36,21 @@ export default function LearningPathCard({ learningPath }: { learningPath: Learn
         <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/20" />
       </div>
 
-      <div 
+      <div
         className="absolute inset-x-0 bottom-0 h-2/3 backdrop-blur-sm pointer-events-none"
         style={{
-          maskImage: 'linear-gradient(to top, black, transparent)',
-          WebkitMaskImage: 'linear-gradient(to top, black, transparent)'
+          maskImage: "linear-gradient(to top, black, transparent)",
+          WebkitMaskImage: "linear-gradient(to top, black, transparent)",
         }}
       />
 
-      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent pointer-events-none" />
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-linear-to-t from-slate-900/80 via-slate-900/30 to-transparent pointer-events-none" />
 
       <div className="absolute inset-0 p-8 flex flex-col items-end justify-end text-right z-10">
         <h3 className="text-4xl md:text-5xl font-bold text-white leading-tight drop-shadow-sm group-hover:text-blue-200 transition-colors mb-2">
           {learningPath.title}
         </h3>
-        
+
         <div className="flex items-center gap-2 text-slate-200 font-medium text-sm tracking-wide">
           <span>{courseCount} Courses</span>
           <span className="w-1 h-1 rounded-full bg-slate-400" />

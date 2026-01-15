@@ -1,6 +1,7 @@
 import Courses from "@/components/Courses";
 import { getCourses } from "@/lib/data/courses";
 import { getCategories } from "@/lib/data/categories";
+import { CourseUI } from "@/types/course-ui";
 
 export const dynamic = "force-dynamic";
 
