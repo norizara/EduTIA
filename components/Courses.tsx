@@ -1,86 +1,66 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useState } from "react";
 import { Search, Filter, ChevronDown, X } from "lucide-react";
 import CourseCard from "@/components/CourseCard";
-import { Category, CourseLevel } from "@prisma/client";
 import { CourseUI } from "@/types/course-ui";
+import { CategoryUI } from "@/types/category-ui";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type CoursesProps = {
   courses: CourseUI[];
-  categories: Category[];
+  categories: CategoryUI[];
 };
 
 export default function Courses({ courses, categories }: CoursesProps) {
-  const searchParams = useSearchParams();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedLevels, setSelectedLevels] = useState<CourseLevel[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [sortBy, setSortBy] = useState<"default" | "ascending" | "descending">(
-    "default"
-  );
+  const searchParams = useSearchParams();
+  const params = new URLSearchParams(searchParams.toString());
+  const router = useRouter();
 
-  useEffect(() => {
-    // search parameter
-    const query = searchParams.get("search");
-    if (query) {
-      setSearchQuery(query);
-    }
+  function handleCategoryToggle(slug: string): void {
+    const params = new URLSearchParams(searchParams.toString());
+    const selectedCategorySlugs = params.getAll("category");
 
-    // category parameter
-    const categorySlug = searchParams.get("category");
-    if (categorySlug) {
-      const category = categories.find((c) => c.slug === categorySlug);
-      if (category) {
-        setSelectedCategories([category.id]);
-      }
-    }
-  }, [searchParams, categories]);
-
-  //toggle selection helper
-  const toggleSelection = <T,>(
-    item: T,
-    list: T[],
-    setList: (l: T[]) => void
-  ) => {
-    if (list.includes(item)) {
-      setList(list.filter((i) => i !== item));
+    if (selectedCategorySlugs.includes(slug)) {
+      params.delete("category");
+      selectedCategorySlugs
+        .filter((c) => c !== slug)
+        .forEach((c) => params.append("category", c));
     } else {
-      setList([...list, item]);
+      params.append("category", slug);
     }
-  };
 
-  // filter and sort logics
-  const filteredCourses = useMemo(() => {
-    return courses
-      .filter((course) => {
-        // filter by search
-        const matchesSearch =
-          course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          course.description.toLowerCase().includes(searchQuery.toLowerCase());
+    router.push(`/courses?${params.toString()}`);
+  }
 
-        // filter by category
-        const matchesCategory =
-          selectedCategories.length === 0 ||
-          selectedCategories.includes(course.category.id);
+  function handleLevelToggle(level: string): void {
+    const params = new URLSearchParams(searchParams.toString());
+    const selectedLevels = params.getAll("level");
 
-        // filter diffculty level
-        const matchesLevel =
-          selectedLevels.length === 0 || selectedLevels.includes(course.level);
+    if (selectedLevels.includes(level)) {
+      params.delete("level");
+      selectedLevels
+        .filter((c) => c !== level)
+        .forEach((c) => params.append("level", c));
+    } else {
+      params.append("level", level);
+    }
 
-        return matchesSearch && matchesCategory && matchesLevel;
-      })
-      .sort((a, b) => {
-        if (sortBy === "ascending") {
-          return a.title.localeCompare(b.title);
-        } else if (sortBy === "descending") {
-          return b.title.localeCompare(a.title);
-        }
-        return 0;
-      });
-  }, [courses, searchQuery, selectedCategories, selectedLevels, sortBy]);
+    router.push(`/courses?${params.toString()}`);
+  }
+
+  function handleSort(value: string): void {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === "default") {
+      params.delete("sort");
+    } else {
+      params.set("sort", value);
+    }
+
+    router.push(`/courses?${params.toString()}`);
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
@@ -107,7 +87,7 @@ export default function Courses({ courses, categories }: CoursesProps) {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* sidebar */}
           <aside
-            className={` z-40
+            className={`z-40
             fixed inset-0 bg-white lg:bg-transparent 
             lg:sticky lg:top-6 lg:w-64 lg:block lg:h-[calc(100vh-3rem)] lg:overflow-y-auto 
             overflow-y-auto transition-transform duration-300 ease-in-out
@@ -140,14 +120,10 @@ export default function Courses({ courses, categories }: CoursesProps) {
                       <div className="relative flex items-center">
                         <input
                           type="checkbox"
-                          checked={selectedCategories.includes(category.id)}
-                          onChange={() =>
-                            toggleSelection(
-                              category.id,
-                              selectedCategories,
-                              setSelectedCategories
-                            )
-                          }
+                          checked={params
+                            .getAll("category")
+                            .includes(category.slug)}
+                          onChange={() => handleCategoryToggle(category.slug)}
                           className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
                         />
                         <svg
@@ -186,16 +162,8 @@ export default function Courses({ courses, categories }: CoursesProps) {
                       <div className="relative flex items-center">
                         <input
                           type="checkbox"
-                          checked={selectedLevels.includes(
-                            level as CourseLevel
-                          )}
-                          onChange={() =>
-                            toggleSelection(
-                              level as CourseLevel,
-                              selectedLevels,
-                              setSelectedLevels
-                            )
-                          }
+                          checked={params.getAll("level").includes(level)}
+                          onChange={() => handleLevelToggle(level)}
                           className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
                         />
                         <svg
@@ -220,16 +188,12 @@ export default function Courses({ courses, categories }: CoursesProps) {
                 </div>
               </div>
 
-              <button
-                onClick={() => {
-                  setSelectedCategories([]);
-                  setSelectedLevels([]);
-                  setSearchQuery("");
-                }}
-                className="w-full py-2 text-sm font-bold text-slate-500 hover:text-slate-900 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors"
+              <Link
+                href="/courses"
+                className="mt-6 block w-full text-center py-3 text-sm font-bold text-slate-600 border border-slate-300 rounded-lghover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
                 Clear Filters
-              </button>
+              </Link>
             </div>
           </aside>
 
@@ -240,7 +204,7 @@ export default function Courses({ courses, categories }: CoursesProps) {
               <p className="text-slate-500 font-medium">
                 Showing{" "}
                 <span className="text-slate-900 font-bold">
-                  {filteredCourses.length}
+                  {courses.length}
                 </span>{" "}
                 courses
               </p>
@@ -251,13 +215,14 @@ export default function Courses({ courses, categories }: CoursesProps) {
                 </span>
                 <div className="relative group">
                   <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
+                    value={params.get("sort") ?? "default"}
+                    onChange={(e) => handleSort(e.target.value)}
                     className="appearance-none bg-white border border-slate-200 pl-4 pr-10 py-2 rounded-lg text-sm font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-eduBlue/20 focus:border-eduBlue"
                   >
                     <option value="default">Default</option>
-                    <option value="ascending">Ascending</option>
-                    <option value="descending">Descending</option>
+                    <option value="rating">Highest Rated</option>
+                    <option value="review">Most Reviewed</option>
+                    <option value="newest">Newest</option>
                   </select>
                   <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                 </div>
@@ -265,9 +230,9 @@ export default function Courses({ courses, categories }: CoursesProps) {
             </div>
 
             {/* courses grid */}
-            {filteredCourses.length > 0 ? (
+            {courses.length > 0 ? (
               <div className="grid gap-6 mx-10 sm:grid-cols-2 sm:mx-0 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
-                {filteredCourses.map((course) => (
+                {courses.map((course) => (
                   <CourseCard key={course.id} course={course} />
                 ))}
               </div>
@@ -283,16 +248,12 @@ export default function Courses({ courses, categories }: CoursesProps) {
                   Try adjusting your search or filters to find what you're
                   looking for.
                 </p>
-                <button
-                  onClick={() => {
-                    setSelectedCategories([]);
-                    setSelectedLevels([]);
-                    setSearchQuery("");
-                  }}
-                  className="mt-6 text-eduBlue font-bold hover:underline"
+                <Link
+                  href="/courses"
+                  className="mt-6 inline-block px-1 py-2 text-sm font-bold text-eduBlue hover:underline hover:text-eduBlue/80 transition-colors"
                 >
                   Clear all filters
-                </button>
+                </Link>
               </div>
             )}
           </main>

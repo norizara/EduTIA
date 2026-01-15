@@ -1,16 +1,8 @@
 import Link from "next/link";
-import { prisma } from "@/lib/prisma";
-import { CategoryUI } from "@/types/category-ui";
+import { getCategories } from "@/lib/data/categories";
 
 export default async function Footer() {
-  const categories: CategoryUI[] = await prisma.category.findMany({
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-    },
-    orderBy: { name: "asc" },
-  });
+  const categories = await getCategories();
 
   const categoriesUI = (categories ?? []).map((category) => ({
     id: category.id,
