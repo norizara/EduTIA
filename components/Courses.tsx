@@ -83,23 +83,23 @@ export default function Courses({ courses, categories }: CoursesProps) {
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
-      {/* semi header */}
+      {/* semi header */} 
       <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <h1 className="text-3xl font-extrabold text-slate-900">All Courses</h1>
-            
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <div className="relative grow md:grow-0 md:w-80">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search courses..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-eduBlue/20 focus:border-eduBlue transition-all"
-                />
-              </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <h1 className="text-lg font-bold text-slate-900">All Courses</h1>
+
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative grow md:grow-0 md:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search courses..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-slate-50 outline-none"
+              />
+            </div>
               
               <button
                 onClick={() => setMobileFiltersOpen(!mobileFiltersOpen)}
