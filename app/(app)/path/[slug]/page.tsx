@@ -1,16 +1,16 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import PathDetails from "@/components/PathDetails";
+import PathDetails from "@/components/PathDetail";
 
 type Props = {
-  params: Promise<{ pathId: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { pathId } = await params;
+  const { slug } = await params;
   const path = await prisma.learningPath.findUnique({
-    where: { id: pathId },
+    where: { slug },
   });
 
   if (!path) {
@@ -26,11 +26,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function PathDetailsPage({ params }: Props) {
-  const { pathId } = await params;
+  const { slug } = await params;
 
   const path = await prisma.learningPath.findUnique({
     where: {
-      id: pathId,
+      slug,
     },
     include: {
       items: {

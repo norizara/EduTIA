@@ -1,6 +1,6 @@
 import { ArrowRight, Star } from "lucide-react";
 import Link from "next/link";
-import { CourseUI } from "@/types/course-ui";
+import { CourseUI } from "@/types/course.ui";
 
 export default function CourseCard({ course }: { course: CourseUI }) {
   return (

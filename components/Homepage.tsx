@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import CourseCard from "@/components/CourseCard";
 import { getCurrentUser } from "@/lib/auth";
-import { CourseUI } from "@/types/course-ui";
+import { CourseUI } from "@/types/course.ui";
 
 type HomepageProps = {
   user: Awaited<ReturnType<typeof getCurrentUser>>;

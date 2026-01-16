@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Search, Filter, ChevronDown, X, Star } from "lucide-react";
 import CourseCard from "@/components/CourseCard";
-import { CourseUI } from "@/types/course-ui";
+import { CourseUI } from "@/types/course.ui";
 import { useRouter, useSearchParams } from "next/navigation";
-import { CategoryUI } from "@/types/category-ui";
+import { CategoryUI } from "@/types/category.ui";
 
 type CoursesProps = {
   courses: CourseUI[];

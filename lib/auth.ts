@@ -6,8 +6,6 @@ export async function getCurrentUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
-  console.log(token);
-
   if (!token) return null;
 
   try {

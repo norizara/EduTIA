@@ -272,6 +272,7 @@ async function main() {
   const ds_path = await prisma.learningPath.create({
     data: {
       title: "Data Science",
+      slug: slugify("Data Science"),
       description: "Data science path that provides with ...",
       status: "PUBLISHED",
     },

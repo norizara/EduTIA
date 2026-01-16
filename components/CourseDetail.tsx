@@ -15,7 +15,7 @@ import {
   Star,
   MessageCircle,
 } from "lucide-react";
-import { CourseDetailUI } from "@/types/course-ui";
+import { CourseDetailUI } from "@/types/course.ui";
 import { enrollCourse } from "@/actions/enroll";
 import { getNextCourseItem } from "@/actions/resume";
 import { getCourseProgress } from "@/actions/progress";

@@ -1,46 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowRight,
-  BookOpen,
-  Clock,
-  CheckCircle2,
-  BarChart,
-  PlayCircle,
-} from "lucide-react";
-import {
-  LearningPath,
-  LearningPathItem,
-  Course,
-  Category,
-} from "@prisma/client";
+import { ArrowRight, BookOpen, Clock, PlayCircle } from "lucide-react";
+import { PathDetailUI } from "@/types/path.ui";
 
-type DetailedLearningPath = LearningPath & {
-  items: (LearningPathItem & {
-    course: Course & {
-      category: Category;
-      _count: { items: number };
-    };
-  })[];
-};
-
-export default function PathDetails({ path }: { path: DetailedLearningPath }) {
+export default function PathDetails({ path }: { path: PathDetailUI }) {
   const totalDurationMinutes = path.items.reduce(
     (acc, item) => acc + item.course.duration,
     0
   );
   const totalHours = Math.max(1, Math.round(totalDurationMinutes / 60));
   const totalCourses = path.items.length;
-
-  // get difficulty
-  const levels = Array.from(new Set(path.items.map((i) => i.course.level)));
-  const pathLevel =
-    levels.length > 1
-      ? `${levels.includes("BEGINNER") ? "Beginner" : "Intermediate"} - ${
-          levels.includes("ADVANCED") ? "Advanced" : "Intermediate"
-        }`
-      : levels[0] || "All Levels";
 
   const firstCourseId = path.items[0]?.courseId;
 
@@ -86,21 +56,7 @@ export default function PathDetails({ path }: { path: DetailedLearningPath }) {
                 <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">
                   Duration
                 </p>
-                <p className="font-bold text-slate-900">~{totalHours} Hours</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                <BarChart className="w-5 h-5 text-eduBlue" />
-              </div>
-              <div>
-                <p className="text-slate-500 text-xs font-bold uppercase tracking-wider">
-                  Level
-                </p>
-                <p className="font-bold text-slate-900 capitalize">
-                  {pathLevel.toLowerCase()}
-                </p>
+                <p className="font-bold text-slate-900">{totalHours} Hours</p>
               </div>
             </div>
           </div>
@@ -126,12 +82,12 @@ export default function PathDetails({ path }: { path: DetailedLearningPath }) {
         </h2>
 
         <div className="relative">
-          {/* verticcal line */}
+          {/* vertical line */}
           <div className="absolute left-8 top-4 bottom-4 w-0.5 bg-slate-200 hidden md:block" />
 
           <div className="space-y-8">
             {path.items.map((item, index) => {
-              const course = item.course;
+              const { course } = item;
               const isLast = index === path.items.length - 1;
 
               return (
@@ -158,7 +114,7 @@ export default function PathDetails({ path }: { path: DetailedLearningPath }) {
 
                   {/* card */}
                   <Link
-                    href={`/courses/${course.id}`}
+                    href={`/courses/${course.slug}`}
                     className="grow bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 hover:border-eduBlue/30 transition-all duration-300 group-hover:-translate-y-1"
                   >
                     <div className="flex flex-col sm:flex-row gap-6">

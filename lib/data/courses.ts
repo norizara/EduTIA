@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { CourseLevel, Prisma } from "@prisma/client";
-import { CourseUI } from "@/types/course-ui";
+import { CourseUI } from "@/types/course.ui";
 
 export async function getCourses(params: URLSearchParams): Promise<CourseUI[]> {
   const search = params.get("search")?.trim();

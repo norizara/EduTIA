@@ -2,16 +2,10 @@
 
 import { BookOpen, Rocket } from "lucide-react";
 import LearningPathCard from "@/components/LearningPathCard";
-import { LearningPath, LearningPathItem, Course } from "@prisma/client";
-
-type LearningPathWithItems = LearningPath & {
-  items: (LearningPathItem & {
-    course: Course;
-  })[];
-};
+import { PathUI } from "@/types/path.ui";
 
 type LearningPathsProps = {
-  learningPaths: LearningPathWithItems[];
+  learningPaths: PathUI[];
 };
 
 export default function LearningPaths({ learningPaths }: LearningPathsProps) {

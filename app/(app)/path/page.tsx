@@ -1,6 +1,6 @@
 import { Metadata } from "next";
-import { prisma } from "@/lib/prisma";
 import LearningPaths from "@/components/LearningPaths";
+import { getPaths } from "@/lib/data/paths";
 
 export const metadata: Metadata = {
   title: "Learning Paths | EduTIA",
@@ -8,25 +8,8 @@ export const metadata: Metadata = {
     "Structured paths to help you master new skills and technologies.",
 };
 
-export default async function LearningPathsPage() {
-  const learningPaths = await prisma.learningPath.findMany({
-    where: {
-      status: "PUBLISHED",
-    },
-    include: {
-      items: {
-        include: {
-          course: true,
-        },
-        orderBy: {
-          position: "asc",
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+export default async function Page() {
+  const learningPaths = await getPaths();
 
   return <LearningPaths learningPaths={learningPaths} />;
 }

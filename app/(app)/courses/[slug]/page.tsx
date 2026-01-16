@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import CourseDetails from "@/components/CourseDetails";
-import { CourseDetailUI } from "@/types/course-ui";
+import CourseDetails from "@/components/CourseDetail";
+import { CourseDetailUI } from "@/types/course.ui";
 
 export const dynamic = "force-dynamic";
 

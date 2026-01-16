@@ -1,4 +1,4 @@
-import { CategoryUI } from "@/types/category-ui";
+import { CategoryUI } from "@/types/category.ui";
 import { prisma } from "../prisma";
 import { cache } from "react";
 

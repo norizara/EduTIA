@@ -26,7 +26,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { getCurrentUser } from "@/lib/auth";
-import { CategoryUI } from "@/types/category-ui";
+import { CategoryUI } from "@/types/category.ui";
 
 type HeaderProps = {
   user: Awaited<ReturnType<typeof getCurrentUser>>;

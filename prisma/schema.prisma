@@ -88,7 +88,6 @@ model Course {
   updatedAt    DateTime   @updatedAt
 }
 
-
 model CourseItem {
   id          String @id @default(uuid())
   position    Int
@@ -207,10 +206,12 @@ model Certificate {
 }
 
 model LearningPath {
-  id          String     @id @default(uuid())
-  title       String
-  description String
-  status      PathStatus @default(DRAFT)
+  id           String     @id @default(uuid())
+  title        String     @unique
+  slug         String     @unique
+  description  String
+  thumbnailUrl String     @default("/thumbnail.jpeg")
+  status       PathStatus @default(DRAFT)
 
   items       LearningPathItem[]
   createdAt   DateTime   @default(now())

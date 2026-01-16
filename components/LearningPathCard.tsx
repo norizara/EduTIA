@@ -1,16 +1,10 @@
 import Link from "next/link";
-import { LearningPath, LearningPathItem, Course } from "@prisma/client";
-
-type LearningPathWithItems = LearningPath & {
-  items: (LearningPathItem & {
-    course: Course;
-  })[];
-};
+import { PathUI } from "@/types/path.ui";
 
 export default function LearningPathCard({
   learningPath,
 }: {
-  learningPath: LearningPathWithItems;
+  learningPath: PathUI;
 }) {
   const totalDurationMinutes = learningPath.items.reduce(
     (acc, item) => acc + item.course.duration,
@@ -19,17 +13,14 @@ export default function LearningPathCard({
   const totalHours = Math.max(1, Math.round(totalDurationMinutes / 60));
   const courseCount = learningPath.items.length;
 
-  const firstCourseThumbnail =
-    learningPath.items[0]?.course.thumbnailUrl || "/thumbnail.jpeg";
-
   return (
     <Link
-      href={`/path/${learningPath.id}`}
+      href={`/path/${learningPath.slug}`}
       className="group relative block w-full h-70 rounded-3xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
     >
       <div className="absolute inset-0">
         <img
-          src={firstCourseThumbnail}
+          src={learningPath.thumbnailUrl}
           alt={learningPath.title}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
@@ -54,7 +45,7 @@ export default function LearningPathCard({
         <div className="flex items-center gap-2 text-slate-200 font-medium text-sm tracking-wide">
           <span>{courseCount} Courses</span>
           <span className="w-1 h-1 rounded-full bg-slate-400" />
-          <span>~{totalHours} Hours</span>
+          <span>{totalHours} Hours</span>
         </div>
       </div>
     </Link>
