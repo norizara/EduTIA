@@ -11,12 +11,11 @@ import {
   Quote,
 } from "lucide-react";
 import CourseCard from "@/components/CourseCard";
-import { getCurrentUser } from "@/lib/auth";
 import { CourseUI } from "@/types/course.ui";
 
 type HomepageProps = {
-  user: Awaited<ReturnType<typeof getCurrentUser>>;
   topCourses: CourseUI[];
+  isAuthenticated: boolean;
 };
 
 const testimonials = [
@@ -102,7 +101,10 @@ const testimonials = [
   },
 ];
 
-export default function Homepage({ user, topCourses }: HomepageProps) {
+export default function Homepage({
+  topCourses,
+  isAuthenticated,
+}: HomepageProps) {
   return (
     <div className="min-h-screen w-full bg-white font-sans text-slate-900 selection:bg-blue-100 flex flex-col overflow-hidden">
       <main className="grow">
@@ -131,7 +133,7 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
                   >
                     Explore Courses
                   </Link>
-                  {!user && (
+                  {!isAuthenticated && (
                     <Link
                       href="/login"
                       className="px-8 py-4 rounded-xl font-bold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
@@ -255,7 +257,11 @@ export default function Homepage({ user, topCourses }: HomepageProps) {
             <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-8 mx-15 lg:mx-0">
               {topCourses?.length ? (
                 topCourses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    isAuthenticated={isAuthenticated}
+                  />
                 ))
               ) : (
                 <p className="text-center text-slate-500">

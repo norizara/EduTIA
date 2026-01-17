@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 export async function getPaths() {
   return await prisma.learningPath.findMany({
     where: {
-      status: "PUBLISHED",
+      isPublished: true,
     },
     include: {
       items: {

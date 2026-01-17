@@ -17,13 +17,13 @@ CREATE TYPE "CourseItemType" AS ENUM ('MODULE', 'WORKSHOP');
 CREATE TYPE "EnrollmentStatus" AS ENUM ('IN_PROGRESS', 'COMPLETED');
 
 -- CreateEnum
-CREATE TYPE "PathStatus" AS ENUM ('DRAFT', 'PUBLISHED');
-
--- CreateEnum
 CREATE TYPE "JobStatus" AS ENUM ('DRAFT', 'PUBLISHED', 'CLOSED');
 
 -- CreateEnum
 CREATE TYPE "ApplicationStatus" AS ENUM ('APPLIED', 'REVIEWED', 'ACCEPTED', 'REJECTED');
+
+-- CreateEnum
+CREATE TYPE "AdminActionType" AS ENUM ('APPROVE_COURSE', 'VERIFY_CORPORATION');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -55,7 +55,7 @@ CREATE TABLE "Profile" (
 -- CreateTable
 CREATE TABLE "CorporationVerification" (
     "id" TEXT NOT NULL,
-    "status" "CorporationStatus" NOT NULL DEFAULT 'PENDING',
+    "status" "CorporationStatus" NOT NULL DEFAULT 'UNVERIFIED',
     "verifiedAt" TIMESTAMP(3),
     "profileId" TEXT NOT NULL,
 
@@ -89,6 +89,15 @@ CREATE TABLE "Course" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Favorite" (
+    "userId" TEXT NOT NULL,
+    "courseId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Favorite_pkey" PRIMARY KEY ("userId","courseId")
 );
 
 -- CreateTable
@@ -184,9 +193,12 @@ CREATE TABLE "Certificate" (
 CREATE TABLE "LearningPath" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "status" "PathStatus" NOT NULL DEFAULT 'DRAFT',
+    "thumbnailUrl" TEXT NOT NULL DEFAULT '/thumbnail.jpeg',
+    "isPublished" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "LearningPath_pkey" PRIMARY KEY ("id")
 );
@@ -257,20 +269,11 @@ CREATE TABLE "CV" (
 -- CreateTable
 CREATE TABLE "AdminAction" (
     "id" TEXT NOT NULL,
-    "actionType" TEXT NOT NULL,
+    "actionType" "AdminActionType" NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "AdminAction_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "AnalyticsEvent" (
-    "id" TEXT NOT NULL,
-    "eventType" TEXT NOT NULL,
-    "timestamp" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "AnalyticsEvent_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -313,6 +316,12 @@ CREATE UNIQUE INDEX "Certificate_certificateCode_key" ON "Certificate"("certific
 CREATE UNIQUE INDEX "Certificate_enrollmentId_key" ON "Certificate"("enrollmentId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "LearningPath_title_key" ON "LearningPath"("title");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LearningPath_slug_key" ON "LearningPath"("slug");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "LearningPathItem_learningPathId_position_key" ON "LearningPathItem"("learningPathId", "position");
 
 -- CreateIndex
@@ -326,6 +335,12 @@ ALTER TABLE "CorporationVerification" ADD CONSTRAINT "CorporationVerification_pr
 
 -- AddForeignKey
 ALTER TABLE "Course" ADD CONSTRAINT "Course_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Favorite" ADD CONSTRAINT "Favorite_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Favorite" ADD CONSTRAINT "Favorite_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "CourseItem" ADD CONSTRAINT "CourseItem_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

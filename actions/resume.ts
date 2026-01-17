@@ -1,10 +1,12 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function getNextCourseItem(courseId: string) {
-  const user = await requireUser();
+  const user = await getCurrentUser();
+
+  if (!user) return null;
 
   return await prisma.courseItem.findFirst({
     where: {
@@ -34,3 +36,7 @@ export async function getNextCourseItem(courseId: string) {
     },
   });
 }
+
+// export async function getNextPathCourse(pathId: string) {
+//   const user = await requireUser();
+// }

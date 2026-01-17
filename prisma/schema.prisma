@@ -17,6 +17,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  favorites             Favorite[]
   enrollments           Enrollment[]
   workshopRegistrations WorkshopRegistration[]
   workshopSubmissions   WorkshopSubmission[]
@@ -47,7 +48,7 @@ model Profile {
 
 model CorporationVerification {
   id         String            @id @default(uuid())
-  status     CorporationStatus @default(PENDING)
+  status     CorporationStatus @default(UNVERIFIED)
   verifiedAt DateTime?
 
   profileId  String   @unique
@@ -83,9 +84,21 @@ model Course {
   workshops          Workshop[]
   learningPathItems  LearningPathItem[]
   enrollments        Enrollment[]
+  favorites          Favorite[]
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+}
+
+model Favorite {
+  userId   String
+  courseId String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+
+  @@id([userId, courseId])
 }
 
 model CourseItem {
@@ -211,10 +224,11 @@ model LearningPath {
   slug         String     @unique
   description  String
   thumbnailUrl String     @default("/thumbnail.jpeg")
-  status       PathStatus @default(DRAFT)
+  isPublished  Boolean    @default(false)
 
   items       LearningPathItem[]
   createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 }
 
 model LearningPathItem {
@@ -287,17 +301,11 @@ model CV {
 
 model AdminAction {
   id         String   @id @default(uuid())
-  actionType String
+  actionType AdminActionType
   createdAt  DateTime @default(now())
 
   userId     String
   user       User     @relation(fields: [userId], references: [id])
-}
-
-model AnalyticsEvent {
-  id        String   @id @default(uuid())
-  eventType String
-  timestamp DateTime @default(now())
 }
 
 enum Role {
@@ -333,11 +341,6 @@ enum EnrollmentStatus {
   COMPLETED
 }
 
-enum PathStatus {
-  DRAFT
-  PUBLISHED
-}
-
 enum JobStatus {
   DRAFT
   PUBLISHED
@@ -349,4 +352,9 @@ enum ApplicationStatus {
   REVIEWED
   ACCEPTED
   REJECTED
+}
+
+enum AdminActionType {
+  APPROVE_COURSE
+  VERIFY_CORPORATION
 }

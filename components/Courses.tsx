@@ -11,6 +11,7 @@ import { CategoryUI } from "@/types/category.ui";
 type CoursesProps = {
   courses: CourseUI[];
   categories: CategoryUI[];
+  isAuthenticated: boolean;
 };
 
 const DURATION_LABELS: Record<string, string> = {
@@ -21,7 +22,11 @@ const DURATION_LABELS: Record<string, string> = {
   extraLong: "20+ hours",
 };
 
-export default function Courses({ courses, categories }: CoursesProps) {
+export default function Courses({
+  courses,
+  categories,
+  isAuthenticated,
+}: CoursesProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -293,7 +298,11 @@ export default function Courses({ courses, categories }: CoursesProps) {
             {courses.length > 0 ? (
               <div className="grid gap-6 mx-10 sm:grid-cols-2 sm:mx-0 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
                 {courses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
+                  <CourseCard
+                    key={course.id}
+                    course={course}
+                    isAuthenticated={isAuthenticated}
+                  />
                 ))}
               </div>
             ) : (

@@ -1,6 +1,7 @@
 import Courses from "@/components/Courses";
 import { getCourses } from "@/lib/data/courses";
 import { getCategories } from "@/lib/data/categories";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -9,6 +10,7 @@ type PageProps = {
 };
 
 export default async function Page({ searchParams }: PageProps) {
+  const user = await getCurrentUser();
   const resolvedSearchParams = await searchParams;
   const params = new URLSearchParams();
 
@@ -21,9 +23,15 @@ export default async function Page({ searchParams }: PageProps) {
   }
 
   const [courses, categories] = await Promise.all([
-    getCourses(params),
+    getCourses(params, user?.id),
     getCategories(),
   ]);
 
-  return <Courses courses={courses} categories={categories} />;
+  return (
+    <Courses
+      courses={courses}
+      categories={categories}
+      isAuthenticated={!!user}
+    />
+  );
 }

@@ -5,7 +5,7 @@ import {
   BookOpen,
   PlayCircle,
   Code,
-  ChevronLeft,
+  ChevronRight,
   Users,
   Calendar,
   Award,
@@ -17,19 +17,23 @@ import {
 } from "lucide-react";
 import { CourseDetailUI } from "@/types/course.ui";
 import { enrollCourse } from "@/actions/enroll";
-import { getNextCourseItem } from "@/actions/resume";
-import { getCourseProgress } from "@/actions/progress";
+import { FavoriteButton } from "./FavoriteButton";
+import { CourseItem } from "@prisma/client";
 
 interface CourseDetailsProps {
   course: CourseDetailUI;
   isEnrolled: boolean;
-  currentUserId?: string;
+  isAuthenticated: boolean;
+  progress: number;
+  nextItem: Pick<CourseItem, "id"> | null;
 }
 
 export default async function CourseDetails({
   course,
   isEnrolled,
-  currentUserId,
+  isAuthenticated,
+  progress,
+  nextItem,
 }: CourseDetailsProps) {
   const formatDuration = (minutes: number) => {
     const hours = Math.floor(minutes / 60);
@@ -49,10 +53,8 @@ export default async function CourseDetails({
     }).format(date);
   };
 
-  const rawProgress = await getCourseProgress(course.id);
-  const progress = Math.min(100, Math.max(0, Number(rawProgress ?? 0)));
+  const safeProgress = Math.min(100, Math.max(0, progress));
 
-  const nextItem = await getNextCourseItem(course.id);
   const startUrl = nextItem
     ? `/courses/${course.slug}/learn/${nextItem.id}`
     : "#";
@@ -62,13 +64,13 @@ export default async function CourseDetails({
       {/* header */}
       <div className="bg-slate-900 text-white border-b border-slate-800 relative z-0">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Link
-            href="/courses"
-            className="inline-flex items-center text-sm text-slate-400 hover:text-white transition-colors mb-8"
-          >
-            <ChevronLeft className="w-4 h-4 mr-1" />
-            Back to Courses
-          </Link>
+          <div className="flex items-center gap-2 font-bold text-sm mb-4">
+            <Link href="/courses" className="text-eduBlue hover:underline">
+              Courses
+            </Link>
+            <ChevronRight className="w-4 h-4 text-slate-400" />
+            <span className="text-slate-300">{course.title}</span>
+          </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
             <div className="lg:col-span-2 space-y-6">
@@ -112,17 +114,22 @@ export default async function CourseDetails({
                   <span className="absolute top-4 left-4 bg-white/80 backdrop-blur-md text-slate-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
                     {course.category.name}
                   </span>
+                  <FavoriteButton
+                    courseId={course.id}
+                    isFavorite={course.isFavorite}
+                    isAuthenticated={isAuthenticated}
+                  />
                 </div>
 
                 <div className="p-6 flex flex-col gap-6">
                   <div className="space-y-1">
                     <span className="text-sm font-medium text-slate-600">
-                      {progress}% completed
+                      {safeProgress}% completed
                     </span>
                     <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-emerald-500 rounded-full transition-all"
-                        style={{ width: `${progress}%` }}
+                        style={{ width: `${safeProgress}%` }}
                       />
                     </div>
                   </div>
@@ -136,7 +143,7 @@ export default async function CourseDetails({
                         <Play className="w-5 h-5 fill-current" />
                         Continue Learning
                       </Link>
-                    ) : currentUserId ? (
+                    ) : isAuthenticated ? (
                       <form
                         action={enrollCourse.bind(null, course.id, course.slug)}
                       >

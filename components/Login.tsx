@@ -41,7 +41,7 @@ export default function Login() {
       }
 
       if (data.role === "ADMIN") router.push("/admin");
-      else router.push("/");
+      else router.back();
     } catch {
       setError("An unexpected error occurred");
     } finally {
@@ -122,12 +122,12 @@ export default function Login() {
               </button>
             </div>
             <div>
-              <Link
-                href={"/"}
-                className="flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-black shadow-x focus-visible:outline-2 focus-visible:outline-offset-2"
+              <button
+                onClick={() => router.back()}
+                className="flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-black shadow-x focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer"
               >
                 Continue as Guest
-              </Link>
+              </button>
             </div>
           </form>
 

@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import CourseDetails from "@/components/CourseDetail";
 import { CourseDetailUI } from "@/types/course.ui";
+import { getCourseProgress } from "@/actions/progress";
+import { getNextCourseItem } from "@/actions/resume";
 
 export const dynamic = "force-dynamic";
 
@@ -49,6 +51,12 @@ export default async function CourseDetailsPage({ params }: PageProps) {
       _count: {
         select: { enrollments: true },
       },
+      favorites: user
+        ? {
+            where: { userId: user.id },
+            select: { userId: true },
+          }
+        : false,
     },
   });
 
@@ -79,6 +87,8 @@ export default async function CourseDetailsPage({ params }: PageProps) {
       position: item.position,
       title: item.module?.title ?? item.workshop?.title ?? "Untitled Item",
     })),
+
+    isFavorite: user ? course.favorites.length > 0 : false,
   };
 
   const enrollment = user
@@ -92,11 +102,17 @@ export default async function CourseDetailsPage({ params }: PageProps) {
       })
     : null;
 
+  const isAuthenticated = !!user;
+  const progress = isAuthenticated ? await getCourseProgress(course.id) : 0;
+  const nextItem = isAuthenticated ? await getNextCourseItem(course.id) : null;
+
   return (
     <CourseDetails
       course={courseDetails}
       isEnrolled={!!enrollment}
-      currentUserId={user?.id}
+      isAuthenticated={isAuthenticated}
+      progress={progress}
+      nextItem={nextItem}
     />
   );
 }

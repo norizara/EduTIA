@@ -15,6 +15,7 @@ export type CourseUI = {
     name: string;
     slug: string;
   };
+  isFavorite: boolean;
 };
 
 export type CourseDetailUI = CourseUI & {

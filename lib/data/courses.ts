@@ -1,8 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { CourseLevel, Prisma } from "@prisma/client";
 import { CourseUI } from "@/types/course.ui";
+import { mapCourseToUI } from "../mappers/course";
 
-export async function getCourses(params: URLSearchParams): Promise<CourseUI[]> {
+export async function getCourses(
+  params: URLSearchParams,
+  userId?: string
+): Promise<CourseUI[]> {
   const search = params.get("search")?.trim();
   const keywords = search ? search.split(/\s+/) : [];
 
@@ -21,7 +25,7 @@ export async function getCourses(params: URLSearchParams): Promise<CourseUI[]> {
   if (sort === "review") orderBy = { reviewCount: "desc" };
   if (sort === "newest") orderBy = { createdAt: "desc" };
 
-  return prisma.course.findMany({
+  const courses = await prisma.course.findMany({
     where: {
       isPublished: true,
 
@@ -110,7 +114,17 @@ export async function getCourses(params: URLSearchParams): Promise<CourseUI[]> {
           slug: true,
         },
       },
+      favorites: userId
+        ? {
+            where: { userId },
+            select: { userId: true },
+          }
+        : false,
     },
     orderBy,
   });
+
+  return courses.map((course) =>
+    mapCourseToUI(course, userId ? { userId } : {})
+  );
 }

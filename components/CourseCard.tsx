@@ -1,8 +1,15 @@
-import { ArrowRight, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
 import { CourseUI } from "@/types/course.ui";
+import { FavoriteButton } from "./FavoriteButton";
 
-export default function CourseCard({ course }: { course: CourseUI }) {
+export default function CourseCard({
+  course,
+  isAuthenticated,
+}: {
+  course: CourseUI;
+  isAuthenticated: boolean;
+}) {
   return (
     <Link
       key={course.id}
@@ -21,6 +28,12 @@ export default function CourseCard({ course }: { course: CourseUI }) {
         <span className="absolute top-4 left-4 bg-white/80 backdrop-blur-md text-slate-900 text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm">
           {course.category.name}
         </span>
+
+        <FavoriteButton
+          courseId={course.id}
+          isFavorite={course.isFavorite}
+          isAuthenticated={isAuthenticated}
+        />
       </div>
 
       <div className="p-6 flex flex-col grow gap-4">

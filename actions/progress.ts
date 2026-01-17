@@ -1,8 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/auth";
+import { getCurrentUser } from "@/lib/auth";
 
 export async function getCourseProgress(courseId: string) {
-  const user = await requireUser();
+  const user = await getCurrentUser();
+
+  if (!user) return 0;
 
   const enrollment = await prisma.enrollment.findFirst({
     where: { userId: user.id, courseId },

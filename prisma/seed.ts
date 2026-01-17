@@ -274,7 +274,7 @@ async function main() {
       title: "Data Science",
       slug: slugify("Data Science"),
       description: "Data science path that provides with ...",
-      status: "PUBLISHED",
+      isPublished: true,
     },
   });
 

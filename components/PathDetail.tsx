@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, Clock, PlayCircle } from "lucide-react";
 import { PathDetailUI } from "@/types/path.ui";
+import { FavoriteButton } from "./FavoriteButton";
 
 export default function PathDetails({ path }: { path: PathDetailUI }) {
+  const isAuthenticated = true;
   const totalDurationMinutes = path.items.reduce(
     (acc, item) => acc + item.course.duration,
     0
@@ -19,12 +21,12 @@ export default function PathDetails({ path }: { path: PathDetailUI }) {
       {/* sub header */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-          <div className="flex items-center gap-2 text-eduBlue font-bold text-sm mb-4">
-            <Link href="/path" className="hover:underline">
+          <div className="flex items-center gap-2 font-bold text-sm mb-4">
+            <Link href="/path" className="text-eduBlue hover:underline">
               Learning Paths
             </Link>
             <ArrowRight className="w-4 h-4 text-slate-400" />
-            <span className="text-slate-500">Path Details</span>
+            <span className="text-slate-500">{path.title}</span>
           </div>
 
           <h1 className="text-3xl md:text-4xl font-bold text-slate-900 mb-6">
@@ -88,7 +90,6 @@ export default function PathDetails({ path }: { path: PathDetailUI }) {
           <div className="space-y-8">
             {path.items.map((item, index) => {
               const { course } = item;
-              const isLast = index === path.items.length - 1;
 
               return (
                 <div
@@ -126,6 +127,11 @@ export default function PathDetails({ path }: { path: PathDetailUI }) {
                           className="w-full h-full object-cover"
                         />
                         <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                        {/* <FavoriteButton
+                          courseId={course.id}
+                          isFavorite={course.isFavorite}
+                          isAuthenticated={isAuthenticated}
+                        /> */}
                       </div>
 
                       {/* info */}
