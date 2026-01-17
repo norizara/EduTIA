@@ -19,6 +19,7 @@ import { CourseDetailUI } from "@/types/course.ui";
 import { enrollCourse } from "@/actions/enroll";
 import { FavoriteButton } from "./FavoriteButton";
 import { CourseItem } from "@prisma/client";
+import CourseRating from "./CourseRating";
 
 interface CourseDetailsProps {
   course: CourseDetailUI;
@@ -123,9 +124,17 @@ export default async function CourseDetails({
 
                 <div className="p-6 flex flex-col gap-6">
                   <div className="space-y-1">
-                    <span className="text-sm font-medium text-slate-600">
-                      {safeProgress}% completed
-                    </span>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-slate-600">
+                        {safeProgress}% completed
+                      </span>
+                      <CourseRating
+                        courseId={course.id}
+                        avgRating={course.avgRating}
+                        userRating={course.userRating}
+                        isAuthenticated={isAuthenticated}
+                      />
+                    </div>
                     <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-emerald-500 rounded-full transition-all"

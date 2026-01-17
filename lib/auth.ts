@@ -1,8 +1,11 @@
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import { prisma } from "@/lib/prisma";
+import { unstable_noStore } from "next/cache";
 
 export async function getCurrentUser() {
+  unstable_noStore();
+
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 

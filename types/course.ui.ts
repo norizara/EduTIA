@@ -27,4 +27,5 @@ export type CourseDetailUI = CourseUI & {
     position: number;
   }[];
   enrollmentCount: number;
+  userRating?: number;
 };

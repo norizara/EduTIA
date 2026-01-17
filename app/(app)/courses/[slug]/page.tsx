@@ -57,6 +57,12 @@ export default async function CourseDetailsPage({ params }: PageProps) {
             select: { userId: true },
           }
         : false,
+      reviews: user
+        ? {
+            where: { userId: user.id },
+            select: { rating: true },
+          }
+        : false,
     },
   });
 
@@ -89,6 +95,7 @@ export default async function CourseDetailsPage({ params }: PageProps) {
     })),
 
     isFavorite: user ? course.favorites.length > 0 : false,
+    userRating: course.reviews?.[0]?.rating ?? 0,
   };
 
   const enrollment = user

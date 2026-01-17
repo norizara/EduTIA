@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Dialog,
@@ -35,26 +35,41 @@ type HeaderProps = {
 
 export default function HeaderClient({ user, categories }: HeaderProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const searchFromUrl = searchParams.get("search") ?? "";
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(searchFromUrl);
+
+  useEffect(() => {
+    setQuery(searchFromUrl);
+  }, [searchFromUrl]);
+
   const categoriesUI = (categories ?? []).map((c: CategoryUI) => ({
     id: c.id,
     name: c.name,
     href: `/courses?category=${c.slug}`,
   }));
 
-  async function handleSearch(e: React.FormEvent) {
+  function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    router.push(`/courses?search=${encodeURIComponent(query)}`);
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (query.trim()) {
+      params.set("search", query);
+    } else {
+      params.delete("search");
+    }
+
+    router.push(`${pathname}?${params.toString()}`);
   }
 
-  // check if in all courses page
-  const pathname = usePathname();
   const isCoursesPage = pathname === "/courses";
 
   return (
     <header
-      // header behavior condition on diff pages
       className={`${
         isCoursesPage ? "relative" : "sticky top-0"
       } z-30 bg-white border-b border-gray-300 transition-all`}

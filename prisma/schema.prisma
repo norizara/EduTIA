@@ -18,6 +18,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   favorites             Favorite[]
+  reviews               Review[]
   enrollments           Enrollment[]
   workshopRegistrations WorkshopRegistration[]
   workshopSubmissions   WorkshopSubmission[]
@@ -85,6 +86,7 @@ model Course {
   learningPathItems  LearningPathItem[]
   enrollments        Enrollment[]
   favorites          Favorite[]
+  reviews            Review[]
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -99,6 +101,21 @@ model Favorite {
   course Course @relation(fields: [courseId], references: [id])
 
   @@id([userId, courseId])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+
+  userId   String
+  courseId String
+
+  user     User   @relation(fields: [userId], references: [id])
+  course   Course @relation(fields: [courseId], references: [id])
+
+  @@unique([userId, courseId]) // one review per user per course
 }
 
 model CourseItem {
