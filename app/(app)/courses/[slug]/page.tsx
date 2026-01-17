@@ -62,7 +62,7 @@ export default async function CourseDetailsPage({ params }: PageProps) {
 
   if (!course) notFound();
 
-  const courseDetails: CourseDetailUI = {
+  const courseDetail: CourseDetailUI = {
     id: course.id,
     title: course.title,
     slug: course.slug,
@@ -108,7 +108,7 @@ export default async function CourseDetailsPage({ params }: PageProps) {
 
   return (
     <CourseDetails
-      course={courseDetails}
+      course={courseDetail}
       isEnrolled={!!enrollment}
       isAuthenticated={isAuthenticated}
       progress={progress}

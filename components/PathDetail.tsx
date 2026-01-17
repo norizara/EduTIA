@@ -5,8 +5,13 @@ import { ArrowRight, BookOpen, Clock, PlayCircle } from "lucide-react";
 import { PathDetailUI } from "@/types/path.ui";
 import { FavoriteButton } from "./FavoriteButton";
 
-export default function PathDetails({ path }: { path: PathDetailUI }) {
-  const isAuthenticated = true;
+export default function PathDetails({
+  path,
+  isAuthenticated,
+}: {
+  path: PathDetailUI;
+  isAuthenticated: boolean;
+}) {
   const totalDurationMinutes = path.items.reduce(
     (acc, item) => acc + item.course.duration,
     0
@@ -126,12 +131,13 @@ export default function PathDetails({ path }: { path: PathDetailUI }) {
                           alt={course.title}
                           className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
-                        {/* <FavoriteButton
+                        <FavoriteButton
                           courseId={course.id}
                           isFavorite={course.isFavorite}
                           isAuthenticated={isAuthenticated}
-                        /> */}
+                          className="absolute top-3 left-3 z-40"
+                        />
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
                       </div>
 
                       {/* info */}

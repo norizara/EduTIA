@@ -6,16 +6,29 @@ import {
 } from "@prisma/client";
 
 export type PathUI = LearningPath & {
-  items: (LearningPathItem & {
-    course: Course;
-  })[];
+  items: {
+    id: string;
+    position: number;
+    course: {
+      id: string;
+      title: string;
+      slug: string;
+    };
+  }[];
+};
+
+type CourseWithMeta = Course & {
+  category: Category;
+  _count: {
+    items: number;
+    favorites: number;
+  };
 };
 
 export type PathDetailUI = LearningPath & {
   items: (LearningPathItem & {
-    course: Course & {
-      category: Category;
-      _count: { items: number };
+    course: CourseWithMeta & {
+      isFavorite: boolean;
     };
   })[];
 };

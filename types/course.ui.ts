@@ -1,4 +1,4 @@
-import { CourseItemType, CourseLevel } from "@prisma/client";
+import { Course, CourseItemType, CourseLevel } from "@prisma/client";
 
 export type CourseUI = {
   id: string;

@@ -9,12 +9,14 @@ interface FavoriteButtonProps {
   courseId: string;
   isFavorite: boolean;
   isAuthenticated: boolean;
+  className?: string;
 }
 
 export function FavoriteButton({
   courseId,
   isFavorite,
   isAuthenticated,
+  className,
 }: FavoriteButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -47,14 +49,14 @@ export function FavoriteButton({
       type="button"
       onClick={handleClick}
       disabled={isPending}
-      className="absolute top-4 right-4 z-40"
+      className={`${className ?? "absolute top-4 right-4 z-40"}`}
       aria-label="Toggle favorite"
     >
       <Heart
-        className={`w-5 h-5 transition-colors ${
+        className={`w-5 h-5 transition-all duration-200 ${
           optimistic
-            ? "text-red-500 fill-red-500"
-            : "text-white hover:text-red-400"
+            ? "text-white/80 fill-white/80 drop-shadow-lg hover:text-red-500 hover:fill-red-500"
+            : "text-white/80 hover:text-red-500"
         }`}
       />
     </button>
