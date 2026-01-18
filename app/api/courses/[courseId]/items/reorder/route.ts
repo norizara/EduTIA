@@ -4,7 +4,7 @@ import { requireAdminUser } from "@/lib/auth";
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: { courseId: string } },
 ) {
   try {
     await requireAdminUser();
@@ -14,7 +14,7 @@ export async function PATCH(
     if (!Array.isArray(items) || items.length === 0) {
       return NextResponse.json(
         { message: "Items are required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -23,7 +23,7 @@ export async function PATCH(
       if (positions[i] !== i + 1) {
         return NextResponse.json(
           { message: "Positions must be continuous starting from 1" },
-          { status: 400 }
+          { status: 400 },
         );
       }
     }
@@ -33,8 +33,8 @@ export async function PATCH(
         prisma.courseItem.update({
           where: { id: item.id },
           data: { position: item.position },
-        })
-      )
+        }),
+      ),
     );
 
     return NextResponse.json({ message: "Course reordered successfully" });
@@ -42,7 +42,7 @@ export async function PATCH(
     console.error("Reorder course items error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

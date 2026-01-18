@@ -44,25 +44,33 @@ export default async function CourseDetailsPage({ params }: PageProps) {
       items: {
         orderBy: { position: "asc" },
         include: {
-          module: true,
-          workshop: true,
+          module: {
+            include: {
+              progresses: user
+                ? {
+                    where: { userId: user.id },
+                    select: { completedAt: true },
+                  }
+                : false,
+            },
+          },
+          workshop: {
+            include: {
+              submissions: user
+                ? {
+                    where: { userId: user.id },
+                    select: { score: true },
+                  }
+                : false,
+            },
+          },
         },
       },
       _count: {
         select: { enrollments: true },
       },
-      favorites: user
-        ? {
-            where: { userId: user.id },
-            select: { userId: true },
-          }
-        : false,
-      reviews: user
-        ? {
-            where: { userId: user.id },
-            select: { rating: true },
-          }
-        : false,
+      favorites: user ? { where: { userId: user.id } } : false,
+      reviews: user ? { where: { userId: user.id } } : false,
     },
   });
 
@@ -87,12 +95,21 @@ export default async function CourseDetailsPage({ params }: PageProps) {
     },
 
     enrollmentCount: course._count.enrollments,
-    items: course.items.map((item) => ({
-      id: item.id,
-      type: item.type,
-      position: item.position,
-      title: item.module?.title ?? item.workshop?.title ?? "Untitled Item",
-    })),
+    items: course.items.map((item) => {
+      const completed =
+        item.type === "MODULE"
+          ? !!item.module?.progresses?.[0]?.completedAt
+          : !!item.workshop?.submissions?.[0]?.score;
+
+      return {
+        id: item.id,
+        slug: item.slug,
+        type: item.type,
+        position: item.position,
+        title: item.module?.title ?? item.workshop?.title ?? "Untitled Item",
+        completed,
+      };
+    }),
 
     isFavorite: user ? course.favorites.length > 0 : false,
     userRating: course.reviews?.[0]?.rating ?? 0,

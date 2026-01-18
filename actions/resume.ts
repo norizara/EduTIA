@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { CourseUI } from "@/types/course.ui";
 
 export async function getNextCourseItem(courseId: string) {
   const user = await getCurrentUser();
@@ -33,10 +34,39 @@ export async function getNextCourseItem(courseId: string) {
     orderBy: { position: "asc" },
     select: {
       id: true,
+      slug: true,
     },
   });
 }
 
-// export async function getNextPathCourse(pathId: string) {
-//   const user = await requireUser();
-// }
+export async function getNextPathCourseSlug(
+  pathId: string,
+): Promise<string | null> {
+  const user = await getCurrentUser();
+  if (!user) return null;
+
+  const nextCourse = await prisma.learningPathItem.findFirst({
+    where: {
+      learningPathId: pathId,
+      course: {
+        isPublished: true,
+        enrollments: {
+          none: {
+            userId: user.id,
+            status: "COMPLETED",
+          },
+        },
+      },
+    },
+    orderBy: { position: "asc" },
+    select: {
+      course: {
+        select: {
+          slug: true,
+        },
+      },
+    },
+  });
+
+  return nextCourse?.course.slug ?? null;
+}

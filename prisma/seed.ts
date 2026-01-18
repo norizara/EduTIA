@@ -92,7 +92,7 @@ async function main() {
 
   const categoryList: Category[] = await prisma.category.findMany();
   const categoryMap = Object.fromEntries(
-    categoryList.map((c) => [c.slug, c.id])
+    categoryList.map((c) => [c.slug, c.id]),
   );
 
   // ===== COURSES =====
@@ -218,6 +218,15 @@ async function main() {
     },
   });
 
+  // ===== MODULE PROGRESS =====
+  await prisma.moduleProgress.create({
+    data: {
+      userId: student.id,
+      moduleId: module1.id,
+      completedAt: new Date(),
+    },
+  });
+
   // ===== WORKSHOP =====
   const workshop = await prisma.workshop.create({
     data: {
@@ -227,23 +236,37 @@ async function main() {
     },
   });
 
+  // ===== WORKSHOP SUBMISSION
+  await prisma.workshopSubmission.create({
+    data: {
+      submissionUrl: "test",
+      score: 100,
+      submittedAt: new Date(),
+      userId: student.id,
+      workshopId: workshop.id,
+    },
+  });
+
   // ===== COURSE TIMELINE =====
   await prisma.courseItem.createMany({
     data: [
       {
         courseId: courseMap[slugify("Python for Data Analysis")],
+        slug: slugify(module1.title),
         position: 1,
         type: "MODULE",
         moduleId: module1.id,
       },
       {
         courseId: courseMap[slugify("Python for Data Analysis")],
+        slug: slugify(module2.title),
         position: 2,
         type: "MODULE",
         moduleId: module2.id,
       },
       {
         courseId: courseMap[slugify("Python for Data Analysis")],
+        slug: slugify(workshop.title),
         position: 3,
         type: "WORKSHOP",
         workshopId: workshop.id,
@@ -264,7 +287,8 @@ async function main() {
     data: {
       userId: student.id,
       courseId: courseMap[slugify("Python for Data Analysis")],
-      progressPercent: 0,
+      progressPercent: 100,
+      status: "COMPLETED",
     },
   });
 

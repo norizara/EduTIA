@@ -42,7 +42,7 @@ model Profile {
   companyWebsite String?
 
   userId         String   @unique
-  user           User     @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   verification   CorporationVerification?
 }
@@ -53,12 +53,12 @@ model CorporationVerification {
   verifiedAt DateTime?
 
   profileId  String   @unique
-  profile    Profile @relation(fields: [profileId], references: [id])
+  profile    Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 }
 
 model Category {
   id        String   @id @default(uuid())
-  name      String   @unique
+  name      String
   slug      String   @unique
   courses   Course[]
   createdAt DateTime @default(now())
@@ -78,7 +78,7 @@ model Course {
   reviewCount  Int         @default(0)
 
   categoryId   String
-  category     Category   @relation(fields: [categoryId], references: [id])
+  category     Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   items              CourseItem[]
   modules            Module[]
@@ -97,8 +97,8 @@ model Favorite {
   courseId String
   createdAt DateTime @default(now())
 
-  user   User   @relation(fields: [userId], references: [id])
-  course Course @relation(fields: [courseId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@id([userId, courseId])
 }
@@ -112,30 +112,33 @@ model Review {
   userId   String
   courseId String
 
-  user     User   @relation(fields: [userId], references: [id])
-  course   Course @relation(fields: [courseId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([userId, courseId]) // one review per user per course
 }
 
 model CourseItem {
   id          String @id @default(uuid())
+  slug        String
   position    Int
   type        CourseItemType
 
   courseId    String
-  course      Course @relation(fields: [courseId], references: [id])
+  course      Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   moduleId    String?
   workshopId  String?
 
-  module      Module?   @relation(fields: [moduleId], references: [id])
-  workshop    Workshop? @relation(fields: [workshopId], references: [id])
+  module      Module?   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  workshop    Workshop? @relation(fields: [workshopId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@unique([courseId, position])
+  @@unique([courseId, slug])
+  @@index([courseId])
 }
 
 model Module {
@@ -144,7 +147,7 @@ model Module {
   contentUrl String
 
   courseId   String
-  course     Course @relation(fields: [courseId], references: [id])
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   courseItems CourseItem[]
   progresses  ModuleProgress[]
@@ -158,10 +161,12 @@ model ModuleProgress {
   moduleId    String
   completedAt DateTime?
 
-  user   User   @relation(fields: [userId], references: [id])
-  module Module @relation(fields: [moduleId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
   @@unique([userId, moduleId])
+  @@index([userId])
+  @@index([moduleId])
 }
 
 model Workshop {
@@ -170,7 +175,7 @@ model Workshop {
   instructions String
 
   courseId     String
-  course       Course @relation(fields: [courseId], references: [id])
+  course       Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   courseItems  CourseItem[]
 
@@ -188,8 +193,8 @@ model WorkshopRegistration {
   userId       String
   workshopId   String
 
-  user         User     @relation(fields: [userId], references: [id])
-  workshop     Workshop @relation(fields: [workshopId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workshop     Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
 
   @@unique([userId, workshopId])
 }
@@ -204,10 +209,12 @@ model WorkshopSubmission {
   userId        String
   workshopId    String
 
-  user          User     @relation(fields: [userId], references: [id])
-  workshop      Workshop @relation(fields: [workshopId], references: [id])
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workshop      Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
 
   @@unique([userId, workshopId])
+  @@index([userId])
+  @@index([workshopId])
 }
 
 model Enrollment {
@@ -218,12 +225,15 @@ model Enrollment {
   userId          String
   courseId        String
 
-  user            User   @relation(fields: [userId], references: [id])
-  course          Course @relation(fields: [courseId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   certificate     Certificate?
 
   @@unique([userId, courseId])
+  @@index([courseId])
+  @@index([userId])
+  @@index([status])
 }
 
 model Certificate {
@@ -232,7 +242,7 @@ model Certificate {
   issuedAt        DateTime @default(now())
 
   enrollmentId    String   @unique
-  enrollment      Enrollment @relation(fields: [enrollmentId], references: [id])
+  enrollment      Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
 }
 
 model LearningPath {
@@ -255,8 +265,8 @@ model LearningPathItem {
   learningPathId String
   courseId       String
 
-  learningPath   LearningPath @relation(fields: [learningPathId], references: [id])
-  course         Course       @relation(fields: [courseId], references: [id])
+  learningPath   LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+  course         Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
   @@unique([learningPathId, position])
 }
@@ -267,7 +277,7 @@ model JobPosting {
   status    JobStatus @default(DRAFT)
 
   userId    String
-  user      User      @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   applications JobApplication[]
 
@@ -282,8 +292,8 @@ model JobApplication {
   userId    String
   jobId     String
 
-  user      User       @relation(fields: [userId], references: [id])
-  job       JobPosting @relation(fields: [jobId], references: [id])
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job  JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
 }
 
 model Skill {
@@ -291,7 +301,7 @@ model Skill {
   name   String
 
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, name])
 }
@@ -304,7 +314,7 @@ model Experience {
   endDate     DateTime?
 
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CV {
@@ -313,7 +323,7 @@ model CV {
   generatedAt DateTime @default(now())
 
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AdminAction {
@@ -322,7 +332,7 @@ model AdminAction {
   createdAt  DateTime @default(now())
 
   userId     String
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Role {

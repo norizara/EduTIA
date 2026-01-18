@@ -1,10 +1,11 @@
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { slugify } from "@/lib/slugify";
 import { NextResponse } from "next/server";
 
 export async function POST(
   req: Request,
-  { params }: { params: { courseId: string } }
+  { params }: { params: { courseId: string } },
 ) {
   try {
     await requireAdminUser();
@@ -14,7 +15,7 @@ export async function POST(
     if (!title || !instructions || position === undefined) {
       return NextResponse.json(
         { message: "title, instruction, position required" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -40,6 +41,7 @@ export async function POST(
       await tx.courseItem.create({
         data: {
           courseId: params.courseId,
+          slug: slugify(workshop.title),
           position,
           type: "WORKSHOP",
           moduleId: workshop.id,
@@ -52,7 +54,7 @@ export async function POST(
     console.error("Create workshop error:", error);
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

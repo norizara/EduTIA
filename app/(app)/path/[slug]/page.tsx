@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import PathDetails from "@/components/PathDetail";
 import { getCurrentUser } from "@/lib/auth";
 import { PathDetailUI } from "@/types/path.ui";
+import { getNextPathCourseSlug } from "@/actions/resume";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -68,5 +69,15 @@ export default async function PathDetailsPage({ params }: Props) {
     })),
   };
 
-  return <PathDetails path={pathDetail} isAuthenticated={!!user} />;
+  const nextCourseSlug = await getNextPathCourseSlug(path.id);
+
+  const safeCourseSlug = nextCourseSlug ?? "";
+
+  return (
+    <PathDetails
+      path={pathDetail}
+      isAuthenticated={!!user}
+      nextCourseSlug={safeCourseSlug}
+    />
+  );
 }

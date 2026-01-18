@@ -8,18 +8,18 @@ import { FavoriteButton } from "./FavoriteButton";
 export default function PathDetails({
   path,
   isAuthenticated,
+  nextCourseSlug,
 }: {
   path: PathDetailUI;
   isAuthenticated: boolean;
+  nextCourseSlug: string;
 }) {
   const totalDurationMinutes = path.items.reduce(
     (acc, item) => acc + item.course.duration,
-    0
+    0,
   );
   const totalHours = Math.max(1, Math.round(totalDurationMinutes / 60));
   const totalCourses = path.items.length;
-
-  const firstCourseId = path.items[0]?.courseId;
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">
@@ -68,17 +68,29 @@ export default function PathDetails({
             </div>
           </div>
 
-          {firstCourseId && (
-            <div className="mt-10">
+          <div className="mt-10">
+            {!isAuthenticated ? (
               <Link
-                href={`/courses/${firstCourseId}`}
-                className="inline-flex items-center gap-2 bg-eduBlue hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-all shadow-lg shadow-eduBlue/20 hover:shadow-eduBlue/40 hover:-translate-y-0.5"
+                href="/login"
+                className="inline-flex items-center gap-2 bg-eduBlue hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-all shadow-lg"
               >
                 <PlayCircle className="w-5 h-5" />
                 Start Learning Path
               </Link>
-            </div>
-          )}
+            ) : nextCourseSlug ? (
+              <Link
+                href={`/courses/${nextCourseSlug}`}
+                className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-all shadow-lg"
+              >
+                <PlayCircle className="w-5 h-5" />
+                Continue Learning
+              </Link>
+            ) : (
+              <div className="inline-flex items-center gap-2 bg-emerald-500 text-white font-bold py-3 px-8 rounded-full shadow-lg">
+                Path Completed
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

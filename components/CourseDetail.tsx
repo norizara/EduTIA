@@ -3,13 +3,10 @@ import {
   Clock,
   BarChart,
   BookOpen,
-  PlayCircle,
-  Code,
   ChevronRight,
   Users,
   Calendar,
   Award,
-  Lock,
   CheckCircle,
   Play,
   Star,
@@ -20,13 +17,14 @@ import { enrollCourse } from "@/actions/enroll";
 import { FavoriteButton } from "./FavoriteButton";
 import { CourseItem } from "@prisma/client";
 import CourseRating from "./CourseRating";
+import CourseItemCard from "./ItemCard";
 
 interface CourseDetailsProps {
   course: CourseDetailUI;
   isEnrolled: boolean;
   isAuthenticated: boolean;
   progress: number;
-  nextItem: Pick<CourseItem, "id"> | null;
+  nextItem: Pick<CourseItem, "slug"> | null;
 }
 
 export default async function CourseDetails({
@@ -56,9 +54,7 @@ export default async function CourseDetails({
 
   const safeProgress = Math.min(100, Math.max(0, progress));
 
-  const startUrl = nextItem
-    ? `/courses/${course.slug}/learn/${nextItem.id}`
-    : "#";
+  const startUrl = nextItem ? `/courses/${course.slug}/${nextItem.slug}` : "#";
 
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
@@ -144,31 +140,38 @@ export default async function CourseDetails({
                   </div>
 
                   <div className="flex flex-col gap-4">
-                    {isEnrolled ? (
+                    {!isAuthenticated ? (
                       <Link
-                        href={startUrl}
-                        className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg py-4 rounded-xl transition-all shadow-sm active:scale-[0.98]"
+                        href="/login"
+                        className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-eduBlue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg py-4 rounded-xl"
                       >
-                        <Play className="w-5 h-5 fill-current" />
-                        Continue Learning
+                        Start Learning Now
                       </Link>
-                    ) : isAuthenticated ? (
+                    ) : safeProgress === 100 ? (
+                      <Link
+                        href={`/courses/${course.slug}/certificate`}
+                        className="w-full flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-medium text-lg py-4 rounded-xl ring-emerald-300 shadow-sm"
+                      >
+                        View Certificate
+                      </Link>
+                    ) : !isEnrolled ? (
                       <form
                         action={enrollCourse.bind(null, course.id, course.slug)}
                       >
                         <button
                           type="submit"
-                          className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-eduBlue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98]"
+                          className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-eduBlue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg py-4 rounded-xl"
                         >
                           Start Learning Now
                         </button>
                       </form>
                     ) : (
                       <Link
-                        href="/login"
-                        className="w-full flex items-center justify-center gap-2 bg-linear-to-r from-eduBlue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold text-lg py-4 rounded-xl transition-all shadow-lg shadow-blue-500/25 active:scale-[0.98]"
+                        href={startUrl}
+                        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-medium text-lg py-4 rounded-xl"
                       >
-                        Start Learning Now
+                        <Play className="w-5 h-5" />
+                        Continue Learning
                       </Link>
                     )}
                   </div>
@@ -300,80 +303,18 @@ export default async function CourseDetails({
                   </div>
                 ) : (
                   <div className="divide-y divide-slate-100">
-                    {course.items.map((item, index) => {
-                      const { id, type, title } = item;
-                      const isModule = type === "MODULE";
-                      const Icon = isModule ? PlayCircle : Code;
-
-                      const isLocked = !isEnrolled;
-                      const itemUrl = isLocked
-                        ? "#"
-                        : `/courses/${course.slug}/learn/${item.id}`;
-
-                      return (
-                        <Link
-                          key={item.id}
-                          href={itemUrl}
-                          className={`
-                            p-5 flex items-center gap-4 transition-colors group
-                            ${
-                              isLocked
-                                ? "cursor-not-allowed opacity-75"
-                                : "cursor-pointer hover:bg-slate-50"
-                            }
-                          `}
-                        >
-                          <div className="shrink-0">
-                            <span
-                              className={`
-                              flex items-center justify-center w-10 h-10 rounded-full transition-all
-                              ${
-                                isLocked
-                                  ? "bg-slate-100 text-slate-400"
-                                  : "bg-slate-100 text-slate-500 group-hover:bg-eduBlue group-hover:text-white"
-                              }
-                            `}
-                            >
-                              {isLocked ? (
-                                <Lock className="w-5 h-5" />
-                              ) : (
-                                <Icon className="w-5 h-5" />
-                              )}
-                            </span>
-                          </div>
-
-                          <div className="grow min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3
-                                className={`font-semibold truncate transition-colors ${
-                                  isLocked
-                                    ? "text-slate-500"
-                                    : "text-slate-800 group-hover:text-eduBlue"
-                                }`}
-                              >
-                                {title || "Untitled Item"}
-                              </h3>
-                              {item.type === "WORKSHOP" && (
-                                <span className="text-[10px] font-bold bg-purple-100 text-purple-600 px-2 py-0.5 rounded border border-purple-200 shrink-0">
-                                  WORKSHOP
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-xs text-slate-400">
-                              Lesson {index + 1}
-                            </p>
-                          </div>
-
-                          <div className="text-slate-300">
-                            {isLocked ? (
-                              <Lock className="w-4 h-4" />
-                            ) : (
-                              <PlayCircle className="w-4 h-4 text-eduBlue opacity-0 group-hover:opacity-100 transition-opacity" />
-                            )}
-                          </div>
-                        </Link>
-                      );
-                    })}
+                    {course.items.map((item, index) => (
+                      <CourseItemCard
+                        key={item.id}
+                        slug={item.slug}
+                        title={item.title}
+                        type={item.type}
+                        index={index}
+                        courseSlug={course.slug}
+                        isEnrolled={isEnrolled}
+                        completed={item.completed}
+                      />
+                    ))}
                   </div>
                 )}
               </div>

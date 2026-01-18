@@ -160,13 +160,16 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
 
         <div className="hidden lg:flex lg:flex-2 lg:justify-end">
           <div className="flex items-center gap-x-8">
-            <a href="#" className="text-sm font-semibold text-gray-900">
+            <a
+              href="/dashboard"
+              className="text-sm font-semibold text-gray-900"
+            >
               Dashboard
             </a>
             <a href="/path" className="text-sm font-semibold text-gray-900">
               Learning Paths
             </a>
-            <a href="#" className="text-sm font-semibold text-gray-900">
+            <a href="/jobs" className="text-sm font-semibold text-gray-900">
               Apply Jobs
             </a>
             <div className="min-w-10 flex items-center justify-end">
@@ -225,7 +228,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
         <div className="fixed inset-0 z-50 bg-black/30" />
         <DialogPanel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
           <div className="flex items-center justify-between">
-            <a href="#" className="-m-1.5 p-1.5">
+            <a href="/" className="-m-1.5 p-1.5">
               <img
                 alt="EduTIA Logo"
                 src="/logo/blue.svg"
@@ -266,19 +269,19 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                   </DisclosurePanel>
                 </Disclosure>
                 <a
-                  href="#"
+                  href="/dashboard"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Dashboard
                 </a>
                 <a
-                  href="#"
+                  href="/path"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Learning Paths
                 </a>
                 <a
-                  href="#"
+                  href="/jobs"
                   className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
                 >
                   Apply Jobs
