@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useActionState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -27,6 +27,7 @@ import {
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { getCurrentUser } from "@/lib/auth";
 import { CategoryUI } from "@/types/category.ui";
+import { logoutAction } from "@/actions/auth";
 
 type HeaderProps = {
   user: Awaited<ReturnType<typeof getCurrentUser>>;
@@ -204,8 +205,10 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
 
                     <MenuItem>
                       <button
+                        type="button"
                         onClick={async () => {
-                          window.location.href = "/api/auth/logout";
+                          await logoutAction();
+                          window.location.href = "/";
                         }}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition"
                       >
@@ -295,11 +298,9 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                   Profile
                 </Link>
                 <button
+                  type="button"
                   onClick={async () => {
-                    await fetch("/api/auth/logout", {
-                      method: "POST",
-                      credentials: "include",
-                    });
+                    await logoutAction();
                     window.location.href = "/";
                   }}
                   className="w-full text-left -mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"

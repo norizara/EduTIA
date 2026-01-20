@@ -1,14 +1,19 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signupAction } from "@/actions/auth";
 
 export default function Page() {
   const router = useRouter();
-
   const [state, formAction, isPending] = useActionState(signupAction, null);
+
+  useEffect(() => {
+    if (state?.success) {
+      router.push("/login");
+    }
+  }, [state, router]);
 
   return (
     <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
@@ -31,7 +36,7 @@ export default function Page() {
               type="email"
               required
               placeholder="Enter your email"
-              className="block w-full rounded-md bg-white px-3 py-1.5"
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-eduBlue sm:text-sm/6"
             />
           </div>
 
@@ -45,7 +50,7 @@ export default function Page() {
               type="password"
               required
               placeholder="Enter your password"
-              className="block w-full rounded-md bg-white px-3 py-1.5"
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-eduBlue sm:text-sm/6"
             />
           </div>
 
@@ -59,7 +64,7 @@ export default function Page() {
               type="password"
               required
               placeholder="Reenter your password"
-              className="block w-full rounded-md bg-white px-3 py-1.5"
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-eduBlue sm:text-sm/6"
             />
           </div>
 
@@ -71,7 +76,7 @@ export default function Page() {
             <select
               name="role"
               required
-              className="block w-full rounded-md bg-white px-3 py-1.5"
+              className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-eduBlue sm:text-sm/6"
             >
               <option value="EDUCATEE">I want to improve my skills</option>
               <option value="CORPORATION">
@@ -89,7 +94,7 @@ export default function Page() {
           <button
             type="submit"
             disabled={isPending}
-            className="flex w-full justify-center rounded-md bg-eduBlue px-3 py-1.5 text-sm font-semibold text-white"
+            className="flex w-full justify-center rounded-md bg-eduBlue px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-eduBlue/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-eduBlue"
           >
             {isPending ? "Signing up..." : "Sign up"}
           </button>
@@ -97,7 +102,7 @@ export default function Page() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-black"
+            className="flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm/6 font-semibold text-black shadow-x focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer"
           >
             Continue as Guest
           </button>

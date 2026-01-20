@@ -2,6 +2,58 @@
 
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+
+export async function loginAction(_prevState: any, formData: FormData) {
+  try {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if (!email || !password) {
+      return { error: "Email and password are required" };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
+      return { error: "Invalid credentials" };
+    }
+
+    const valid = await bcrypt.compare(password, user.password);
+    if (!valid) {
+      return { error: "Invalid credentials" };
+    }
+
+    const token = jwt.sign(
+      { userId: user.id, role: user.role },
+      process.env.JWT_SECRET!,
+      { expiresIn: "7d" },
+    );
+
+    const cookieStore = await cookies();
+    cookieStore.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return { success: true, role: user.role };
+  } catch {
+    return { error: "Something went wrong" };
+  }
+}
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  cookieStore.delete("token");
+
+  return { success: true };
+}
 
 export async function signupAction(_prevState: any, formData: FormData) {
   try {
@@ -19,6 +71,7 @@ export async function signupAction(_prevState: any, formData: FormData) {
     }
 
     const exists = await prisma.user.findUnique({ where: { email } });
+
     if (exists) {
       return { error: "Email already in use" };
     }
