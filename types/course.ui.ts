@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { CourseItemType, CourseLevel } from "@prisma/client";
 
 export type CourseUI = {
@@ -31,3 +32,19 @@ export type CourseDetailUI = CourseUI & {
   enrollmentCount: number;
   userRating?: number;
 };
+
+export type CourseAdmin = Prisma.CourseGetPayload<{
+  include: {
+    category: true;
+    items: {
+      orderBy: {
+        position: "asc";
+      };
+      include: {
+        module: true;
+        workshop: true;
+      };
+    };
+    enrollments: true;
+  };
+}>;

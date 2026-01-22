@@ -43,7 +43,8 @@ export async function loginAction(_prevState: any, formData: FormData) {
     });
 
     return { success: true, role: user.role };
-  } catch {
+  } catch (error) {
+    console.error(error);
     return { error: "Something went wrong" };
   }
 }
@@ -87,7 +88,8 @@ export async function signupAction(_prevState: any, formData: FormData) {
     });
 
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error(error);
     return { error: "Something went wrong" };
   }
 }

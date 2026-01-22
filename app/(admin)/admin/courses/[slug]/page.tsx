@@ -1,8 +1,9 @@
-import EditCoursePopover from "@/components/admin/EditCourse";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Star } from "lucide-react";
+import { getCategories } from "@/lib/data/categories";
+import UpdateCoursePopover from "@/components/admin/UpdateCourse";
 
 export default async function AdminCourseDetail({
   params,
@@ -30,11 +31,13 @@ export default async function AdminCourseDetail({
 
   if (!course) notFound();
 
+  const categories = await getCategories();
+
   return (
     <div>
-      <div className="flex gap-2">
+      <div className="flex gap-5">
         <h1 className="text-2xl font-bold">{course.title}</h1>
-        <EditCoursePopover />
+        <UpdateCoursePopover course={course} categories={categories} />
       </div>
       <div className="flex flex-col">
         <p>

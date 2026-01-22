@@ -1,20 +1,23 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { createCourseAction } from "@/actions/course";
+import { updateCourseAction } from "@/actions/course";
 import { CategoryUI } from "@/types/category.ui";
 import { useRouter } from "next/navigation";
+import { CourseAdmin } from "@/types/course.ui";
 
-export default function CreateCoursePopover({
+export default function UpdateCoursePopover({
+  course,
   categories,
 }: {
+  course: CourseAdmin;
   categories: CategoryUI[];
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
   const [state, formAction, isPending] = useActionState(
-    createCourseAction,
+    updateCourseAction,
     null,
   );
 
@@ -42,9 +45,9 @@ export default function CreateCoursePopover({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="p-2 bg-black text-white rounded-md"
+        className="px-1 bg-gray-200 text-black rounded-md text-xs"
       >
-        Create Course
+        Update Course
       </button>
 
       {open && (
@@ -55,7 +58,7 @@ export default function CreateCoursePopover({
           />
 
           <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-bold mb-4">Create Course</h2>
+            <h2 className="text-lg font-bold mb-4">Update Course</h2>
 
             <form action={formAction} className="space-y-3">
               <p>
@@ -64,6 +67,7 @@ export default function CreateCoursePopover({
               <input
                 name="title"
                 required
+                defaultValue={course.title}
                 placeholder="Course title"
                 className="w-full rounded border p-2"
               />
@@ -74,6 +78,7 @@ export default function CreateCoursePopover({
               <input
                 name="description"
                 required
+                defaultValue={course.description}
                 placeholder="Description"
                 className="w-full rounded border p-2"
               />
@@ -84,6 +89,7 @@ export default function CreateCoursePopover({
               <select
                 name="categoryId"
                 required
+                defaultValue={course.category.id}
                 className="w-full rounded border p-2"
               >
                 <option value="">Select category</option>
@@ -100,6 +106,7 @@ export default function CreateCoursePopover({
               <select
                 name="level"
                 required
+                defaultValue={course.level}
                 className="w-full rounded border p-2"
               >
                 <option value="">Select level</option>
@@ -107,6 +114,34 @@ export default function CreateCoursePopover({
                 <option value="INTERMEDIATE">Intermediate</option>
                 <option value="ADVANCED">Advanced</option>
               </select>
+
+              <p>
+                <b>Course Items:</b>
+              </p>
+              <div className="space-y-2">
+                {course.items.map((i) => (
+                  <div
+                    key={i.id}
+                    className="grid grid-cols-[70px_1fr_60px] items-center gap-3 w-full"
+                  >
+                    <span className="text-xs font-semibold text-gray-600">
+                      {i.type}
+                    </span>
+
+                    <span className="text-sm truncate">
+                      {i.type === "MODULE"
+                        ? i.module?.title
+                        : i.workshop?.title}
+                    </span>
+
+                    <input
+                      name={`position_${i.id}`}
+                      defaultValue={i.position}
+                      className="w-full rounded border p-1 text-center"
+                    />
+                  </div>
+                ))}
+              </div>
 
               {state?.error && (
                 <p className="text-sm text-red-600">{state.error}</p>
@@ -126,7 +161,7 @@ export default function CreateCoursePopover({
                   disabled={isPending}
                   className="px-4 py-2 text-sm rounded bg-black text-white"
                 >
-                  {isPending ? "Creating..." : "Create"}
+                  {isPending ? "Updating..." : "Update"}
                 </button>
               </div>
             </form>
