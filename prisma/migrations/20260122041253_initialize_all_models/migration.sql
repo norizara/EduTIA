@@ -79,7 +79,7 @@ CREATE TABLE "Course" (
     "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "level" "CourseLevel" NOT NULL,
-    "duration" INTEGER NOT NULL,
+    "duration" INTEGER NOT NULL DEFAULT 0,
     "thumbnailUrl" TEXT NOT NULL DEFAULT '/thumbnail.jpeg',
     "isPublished" BOOLEAN NOT NULL DEFAULT false,
     "avgRating" DOUBLE PRECISION NOT NULL DEFAULT 0,
@@ -132,7 +132,6 @@ CREATE TABLE "Module" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "contentUrl" TEXT NOT NULL,
-    "courseId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -151,7 +150,6 @@ CREATE TABLE "Workshop" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "instructions" TEXT NOT NULL,
-    "courseId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -308,13 +306,13 @@ CREATE UNIQUE INDEX "Course_slug_key" ON "Course"("slug");
 CREATE UNIQUE INDEX "Review_userId_courseId_key" ON "Review"("userId", "courseId");
 
 -- CreateIndex
-CREATE INDEX "CourseItem_courseId_idx" ON "CourseItem"("courseId");
+CREATE UNIQUE INDEX "CourseItem_moduleId_key" ON "CourseItem"("moduleId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "CourseItem_workshopId_key" ON "CourseItem"("workshopId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "CourseItem_courseId_position_key" ON "CourseItem"("courseId", "position");
-
--- CreateIndex
-CREATE UNIQUE INDEX "CourseItem_courseId_slug_key" ON "CourseItem"("courseId", "slug");
 
 -- CreateIndex
 CREATE INDEX "ModuleProgress_userId_idx" ON "ModuleProgress"("userId");
@@ -398,16 +396,10 @@ ALTER TABLE "CourseItem" ADD CONSTRAINT "CourseItem_moduleId_fkey" FOREIGN KEY (
 ALTER TABLE "CourseItem" ADD CONSTRAINT "CourseItem_workshopId_fkey" FOREIGN KEY ("workshopId") REFERENCES "Workshop"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Module" ADD CONSTRAINT "Module_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "ModuleProgress" ADD CONSTRAINT "ModuleProgress_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ModuleProgress" ADD CONSTRAINT "ModuleProgress_moduleId_fkey" FOREIGN KEY ("moduleId") REFERENCES "Module"("id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Workshop" ADD CONSTRAINT "Workshop_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Course"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "WorkshopRegistration" ADD CONSTRAINT "WorkshopRegistration_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

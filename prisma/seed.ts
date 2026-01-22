@@ -206,7 +206,6 @@ async function main() {
     data: {
       title: "Python Basics",
       contentUrl: "/thumbnail.jpeg",
-      courseId: courseMap[slugify("Python for Data Analysis")],
     },
   });
 
@@ -214,7 +213,6 @@ async function main() {
     data: {
       title: "Data Analysis with Pandas",
       contentUrl: "/thumbnail.jpeg",
-      courseId: courseMap[slugify("Python for Data Analysis")],
     },
   });
 
@@ -232,7 +230,6 @@ async function main() {
     data: {
       title: "Python Hands-on Workshop",
       instructions: "Complete the data analysis task.",
-      courseId: courseMap[slugify("Python for Data Analysis")],
     },
   });
 

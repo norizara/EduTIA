@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import CreateCoursePopover from "@/components/admin/CreateCourse";
+import { getCategories } from "@/lib/data/categories";
 
 export default async function AdminCoursesPage() {
   const courses = await prisma.course.findMany({
@@ -9,20 +11,29 @@ export default async function AdminCoursesPage() {
         select: { enrollments: true },
       },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: {
+      enrollments: {
+        _count: "desc",
+      },
+    },
   });
+
+  const categories = await getCategories();
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Courses</h1>
+      <div className="flex items-center justify-between m-2">
+        <h1 className="text-2xl font-bold">Courses</h1>
+        <CreateCoursePopover categories={categories} />
+      </div>
 
       <table className="w-full bg-white rounded shadow">
-        <thead className="bg-gray-100 text-left">
+        <thead className="bg-gray-100">
           <tr>
             <th className="p-3">Title</th>
-            <th>Category</th>
-            <th>Published</th>
-            <th>Enrollments</th>
+            <th className="p-3 border-l">Category</th>
+            <th className="p-3 border-l">Published</th>
+            <th className="p-3 border-l">Enrollments</th>
           </tr>
         </thead>
         <tbody>
@@ -30,15 +41,19 @@ export default async function AdminCoursesPage() {
             <tr key={c.id} className="border-t">
               <td className="p-3">
                 <Link
-                  href={`/admin/courses/${c.id}`}
+                  href={`/admin/courses/${c.slug}`}
                   className="text-blue-600 hover:underline"
                 >
                   {c.title}
                 </Link>
               </td>
-              <td>{c.category.name}</td>
-              <td>{c.isPublished ? "Yes" : "No"}</td>
-              <td>{c._count.enrollments}</td>
+              <td className="p-3 border-l">{c.category.name}</td>
+              <td className="p-3 border-l text-center">
+                {c.isPublished ? "Yes" : "No"}
+              </td>
+              <td className="p-3 border-l text-center">
+                {c._count.enrollments}
+              </td>
             </tr>
           ))}
         </tbody>

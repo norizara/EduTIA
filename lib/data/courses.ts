@@ -4,8 +4,8 @@ import { CourseUI } from "@/types/course.ui";
 import { mapCourseToUI } from "../mappers/course";
 
 export async function getCourses(
-  params: URLSearchParams,
-  userId?: string
+  params: URLSearchParams = new URLSearchParams(),
+  userId?: string,
 ): Promise<CourseUI[]> {
   const search = params.get("search")?.trim();
   const keywords = search ? search.split(/\s+/) : [];
@@ -125,6 +125,6 @@ export async function getCourses(
   });
 
   return courses.map((course) =>
-    mapCourseToUI(course, userId ? { userId } : {})
+    mapCourseToUI(course, userId ? { userId } : {}),
   );
 }

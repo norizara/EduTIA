@@ -17,18 +17,18 @@ export default async function AdminCorporationsPage() {
         <thead className="bg-gray-100">
           <tr>
             <th className="p-3">User</th>
-            <th>Company</th>
-            <th>Status</th>
-            <th>Action</th>
+            <th className="p-3 border-l">Company</th>
+            <th className="p-3 border-l">Status</th>
+            <th className="p-3 border-l">Action</th>
           </tr>
         </thead>
         <tbody>
           {requests.map((r) => (
             <tr key={r.id} className="border-t">
               <td className="p-3">{r.profile.user.email}</td>
-              <td>{r.profile.companyName}</td>
-              <td>{r.status}</td>
-              <td>
+              <td className="p-3 border-l">{r.profile.companyName}</td>
+              <td className="p-3 border-l text-center">{r.status}</td>
+              <td className="p-3 border-l text-center">
                 <a
                   href={`/admin/corporations/${r.id}`}
                   className="text-blue-600"

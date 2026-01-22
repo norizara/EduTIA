@@ -26,7 +26,6 @@ export default function Page() {
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
         <form action={formAction} className="space-y-6">
-          {/* Email */}
           <div>
             <label className="block text-sm/6 font-medium text-gray-900">
               Email address
@@ -40,7 +39,6 @@ export default function Page() {
             />
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-sm/6 font-medium text-gray-900">
               Password
@@ -54,7 +52,6 @@ export default function Page() {
             />
           </div>
 
-          {/* Confirm */}
           <div>
             <label className="block text-sm/6 font-medium text-gray-900">
               Password Confirmation
@@ -68,7 +65,6 @@ export default function Page() {
             />
           </div>
 
-          {/* Role */}
           <div>
             <label className="block text-sm/6 font-medium text-gray-900">
               What do you want to do?
@@ -85,12 +81,10 @@ export default function Page() {
             </select>
           </div>
 
-          {/* Error */}
           {state?.error && (
             <p className="text-sm text-red-600">{state.error}</p>
           )}
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={isPending}

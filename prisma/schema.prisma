@@ -70,7 +70,7 @@ model Course {
   slug         String      @unique
   description  String
   level        CourseLevel
-  duration     Int
+  duration     Int         @default(0)
   thumbnailUrl String      @default("/thumbnail.jpeg")
   isPublished  Boolean     @default(false)
 
@@ -81,8 +81,6 @@ model Course {
   category     Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   items              CourseItem[]
-  modules            Module[]
-  workshops          Workshop[]
   learningPathItems  LearningPathItem[]
   enrollments        Enrollment[]
   favorites          Favorite[]
@@ -119,26 +117,24 @@ model Review {
 }
 
 model CourseItem {
-  id          String @id @default(uuid())
-  slug        String
-  position    Int
-  type        CourseItemType
+  id         String @id @default(uuid())
+  slug       String
+  position   Int
+  type       CourseItemType
 
-  courseId    String
-  course      Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId   String
+  course     Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
-  moduleId    String?
-  workshopId  String?
+  moduleId   String? @unique
+  module     Module? @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 
-  module      Module?   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  workshop    Workshop? @relation(fields: [workshopId], references: [id], onDelete: Cascade)
+  workshopId String? @unique
+  workshop   Workshop? @relation(fields: [workshopId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@unique([courseId, position])
-  @@unique([courseId, slug])
-  @@index([courseId])
 }
 
 model Module {
@@ -146,14 +142,12 @@ model Module {
   title      String
   contentUrl String
 
-  courseId   String
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseItem CourseItem?
 
-  courseItems CourseItem[]
-  progresses  ModuleProgress[]
+  progresses ModuleProgress[]
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ModuleProgress {
@@ -174,16 +168,13 @@ model Workshop {
   title        String
   instructions String
 
-  courseId     String
-  course       Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-
-  courseItems  CourseItem[]
+  courseItem   CourseItem?
 
   registrations WorkshopRegistration[]
   submissions   WorkshopSubmission[]
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model WorkshopRegistration {
