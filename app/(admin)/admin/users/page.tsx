@@ -8,6 +8,7 @@ export default async function AdminUsersPage() {
         select: { enrollments: true },
       },
     },
+    orderBy: { role: "asc" },
   });
 
   return (
@@ -18,16 +19,18 @@ export default async function AdminUsersPage() {
         <thead className="bg-gray-100">
           <tr>
             <th className="p-3">Email</th>
-            <th>Role</th>
-            <th>Enrollments</th>
+            <th className="p-3 border-l">Role</th>
+            <th className="p-3 border-l">Enrollments</th>
           </tr>
         </thead>
         <tbody>
           {users.map((u) => (
             <tr key={u.id} className="border-t">
               <td className="p-3">{u.email}</td>
-              <td>{u.role}</td>
-              <td>{u._count.enrollments}</td>
+              <td className="p-3 border-l">{u.role}</td>
+              <td className="p-3 border-l text-center">
+                {u._count.enrollments}
+              </td>
             </tr>
           ))}
         </tbody>

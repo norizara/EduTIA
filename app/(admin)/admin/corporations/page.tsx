@@ -7,6 +7,7 @@ export default async function AdminCorporationsPage() {
         include: { user: true },
       },
     },
+    orderBy: { status: "asc" },
   });
 
   return (

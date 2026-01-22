@@ -11,18 +11,22 @@ export default async function AdminCoursesPage() {
         select: { enrollments: true },
       },
     },
-    orderBy: {
-      enrollments: {
-        _count: "desc",
+    orderBy: [
+      { isPublished: "desc" },
+      {
+        enrollments: {
+          _count: "desc",
+        },
       },
-    },
+      { title: "asc" },
+    ],
   });
 
   const categories = await getCategories();
 
   return (
     <div>
-      <div className="flex items-center justify-between m-2">
+      <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold">Courses</h1>
         <CreateCoursePopover categories={categories} />
       </div>

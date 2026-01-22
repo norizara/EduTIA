@@ -45,7 +45,7 @@ export default function UpdateCoursePopover({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="px-1 bg-gray-200 text-black rounded-md text-xs"
+        className="p-2 bg-gray-200 text-black rounded-md text-xs w-25"
       >
         Update Course
       </button>
@@ -57,114 +57,142 @@ export default function UpdateCoursePopover({
             onClick={() => setOpen(false)}
           />
 
-          <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-bold mb-4">Update Course</h2>
+          <div className="relative z-10 w-full max-w-md max-h-[90vh] overflow-hidden rounded-xl bg-white shadow-xl">
+            <div className="p-6 overflow-y-auto max-h-[90vh]">
+              <h2 className="text-lg font-bold mb-4">Update Course</h2>
 
-            <form action={formAction} className="space-y-3">
-              <p>
-                <b>Title:</b>
-              </p>
-              <input
-                name="title"
-                required
-                defaultValue={course.title}
-                placeholder="Course title"
-                className="w-full rounded border p-2"
-              />
+              <form action={formAction} className="space-y-3">
+                <p>
+                  <b>Title:</b>
+                </p>
+                <input
+                  name="title"
+                  required
+                  defaultValue={course.title}
+                  placeholder="Course title"
+                  className="w-full rounded border p-2"
+                />
 
-              <p>
-                <b>Description:</b>
-              </p>
-              <input
-                name="description"
-                required
-                defaultValue={course.description}
-                placeholder="Description"
-                className="w-full rounded border p-2"
-              />
+                <p>
+                  <b>Description:</b>
+                </p>
+                <input
+                  name="description"
+                  required
+                  defaultValue={course.description}
+                  placeholder="Description"
+                  className="w-full rounded border p-2"
+                />
 
-              <p>
-                <b>Category:</b>
-              </p>
-              <select
-                name="categoryId"
-                required
-                defaultValue={course.category.id}
-                className="w-full rounded border p-2"
-              >
-                <option value="">Select category</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
+                <p>
+                  <b>Thumbnail URL:</b>
+                </p>
+                <input
+                  name="thumbnailUrl"
+                  required
+                  defaultValue={course.thumbnailUrl}
+                  placeholder="Thumbnail URL"
+                  className="w-full rounded border p-2"
+                />
 
-              <p>
-                <b>Level:</b>
-              </p>
-              <select
-                name="level"
-                required
-                defaultValue={course.level}
-                className="w-full rounded border p-2"
-              >
-                <option value="">Select level</option>
-                <option value="BEGINNER">Beginner</option>
-                <option value="INTERMEDIATE">Intermediate</option>
-                <option value="ADVANCED">Advanced</option>
-              </select>
+                <p>
+                  <b>Category:</b>
+                </p>
+                <select
+                  name="categoryId"
+                  required
+                  defaultValue={course.category.id}
+                  className="w-full rounded border p-2"
+                >
+                  <option value="">Select category</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
 
-              <p>
-                <b>Course Items:</b>
-              </p>
-              <div className="space-y-2">
-                {course.items.map((i) => (
-                  <div
-                    key={i.id}
-                    className="grid grid-cols-[70px_1fr_60px] items-center gap-3 w-full"
+                <p>
+                  <b>Level:</b>
+                </p>
+                <select
+                  name="level"
+                  required
+                  defaultValue={course.level}
+                  className="w-full rounded border p-2"
+                >
+                  <option value="">Select level</option>
+                  <option value="BEGINNER">Beginner</option>
+                  <option value="INTERMEDIATE">Intermediate</option>
+                  <option value="ADVANCED">Advanced</option>
+                </select>
+
+                <p>
+                  <b>Course Items:</b>
+                </p>
+                <div className="space-y-2">
+                  {course.items.map((i) => (
+                    <div
+                      key={i.id}
+                      className="grid grid-cols-[70px_1fr_45px] items-center gap-3 w-full"
+                    >
+                      <span className="text-xs font-semibold text-gray-600">
+                        {i.type}
+                      </span>
+
+                      <span className="text-sm truncate">
+                        {i.type === "MODULE"
+                          ? i.module?.title
+                          : i.workshop?.title}
+                      </span>
+
+                      <input
+                        name={`position_${i.id}`}
+                        required
+                        defaultValue={i.position}
+                        className="w-full rounded border p-1 text-center"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                <p>
+                  <b>Published:</b>
+                </p>
+
+                <select
+                  name="isPublished"
+                  required
+                  defaultValue={course.isPublished ? "true" : "false"}
+                  className="w-full rounded border p-2"
+                >
+                  <option value="true">Published</option>
+                  <option value="false">Draft</option>
+                </select>
+
+                {state?.error && (
+                  <p className="text-sm text-red-600">{state.error}</p>
+                )}
+
+                <div className="mt-6 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="px-4 py-2 text-sm rounded border"
                   >
-                    <span className="text-xs font-semibold text-gray-600">
-                      {i.type}
-                    </span>
+                    Cancel
+                  </button>
 
-                    <span className="text-sm truncate">
-                      {i.type === "MODULE"
-                        ? i.module?.title
-                        : i.workshop?.title}
-                    </span>
-
-                    <input
-                      name={`position_${i.id}`}
-                      defaultValue={i.position}
-                      className="w-full rounded border p-1 text-center"
-                    />
-                  </div>
-                ))}
-              </div>
-
-              {state?.error && (
-                <p className="text-sm text-red-600">{state.error}</p>
-              )}
-
-              <div className="mt-6 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-2 text-sm rounded border"
-                >
-                  Cancel
-                </button>
-
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="px-4 py-2 text-sm rounded bg-black text-white"
-                >
-                  {isPending ? "Updating..." : "Update"}
-                </button>
-              </div>
-            </form>
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className="px-4 py-2 text-sm rounded bg-black text-white"
+                  >
+                    {isPending ? "Updating..." : "Update"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

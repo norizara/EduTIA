@@ -44,8 +44,10 @@ export async function updateCourseAction(_prev: any, formData: FormData) {
   try {
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
+    const thumbnailUrl = formData.get("thumbnailUrl") as string;
     const categoryId = formData.get("categoryId") as string;
     const level = formData.get("level") as CourseLevel;
+    const isPublished = formData.get("isPublished") === "true";
 
     if (!title || !description || !categoryId || !level) {
       return { error: "All fields are required" };
@@ -58,6 +60,8 @@ export async function updateCourseAction(_prev: any, formData: FormData) {
         slug: slugify(title),
         description,
         level,
+        thumbnailUrl,
+        isPublished,
         categoryId,
       },
     });
@@ -113,4 +117,10 @@ export async function updateCourseAction(_prev: any, formData: FormData) {
     console.error(err);
     return { error: "Failed to update course" };
   }
+}
+
+export async function deleteCourseAction(courseId: string) {
+  await prisma.course.delete({
+    where: { id: courseId },
+  });
 }

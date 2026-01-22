@@ -54,82 +54,84 @@ export default function CreateCoursePopover({
             onClick={() => setOpen(false)}
           />
 
-          <div className="relative z-10 w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
-            <h2 className="text-lg font-bold mb-4">Create Course</h2>
+          <div className="relative z-10 w-full max-w-md max-h-[90vh] overflow-hidden rounded-xl bg-white shadow-xl">
+            <div className="p-6 overflow-y-auto max-h-[90vh]">
+              <h2 className="text-lg font-bold mb-4">Create Course</h2>
 
-            <form action={formAction} className="space-y-3">
-              <p>
-                <b>Title:</b>
-              </p>
-              <input
-                name="title"
-                required
-                placeholder="Course title"
-                className="w-full rounded border p-2"
-              />
+              <form action={formAction} className="space-y-3">
+                <p>
+                  <b>Title:</b>
+                </p>
+                <input
+                  name="title"
+                  required
+                  placeholder="Course title"
+                  className="w-full rounded border p-2"
+                />
 
-              <p>
-                <b>Description:</b>
-              </p>
-              <input
-                name="description"
-                required
-                placeholder="Description"
-                className="w-full rounded border p-2"
-              />
+                <p>
+                  <b>Description:</b>
+                </p>
+                <input
+                  name="description"
+                  required
+                  placeholder="Description"
+                  className="w-full rounded border p-2"
+                />
 
-              <p>
-                <b>Category:</b>
-              </p>
-              <select
-                name="categoryId"
-                required
-                className="w-full rounded border p-2"
-              >
-                <option value="">Select category</option>
-                {categories.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.name}
-                  </option>
-                ))}
-              </select>
-
-              <p>
-                <b>Level:</b>
-              </p>
-              <select
-                name="level"
-                required
-                className="w-full rounded border p-2"
-              >
-                <option value="">Select level</option>
-                <option value="BEGINNER">Beginner</option>
-                <option value="INTERMEDIATE">Intermediate</option>
-                <option value="ADVANCED">Advanced</option>
-              </select>
-
-              {state?.error && (
-                <p className="text-sm text-red-600">{state.error}</p>
-              )}
-
-              <div className="mt-6 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-2 text-sm rounded border"
+                <p>
+                  <b>Category:</b>
+                </p>
+                <select
+                  name="categoryId"
+                  required
+                  className="w-full rounded border p-2"
                 >
-                  Cancel
-                </button>
+                  <option value="">Select category</option>
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
 
-                <button
-                  type="submit"
-                  disabled={isPending}
-                  className="px-4 py-2 text-sm rounded bg-black text-white"
+                <p>
+                  <b>Level:</b>
+                </p>
+                <select
+                  name="level"
+                  required
+                  className="w-full rounded border p-2"
                 >
-                  {isPending ? "Creating..." : "Create"}
-                </button>
-              </div>
-            </form>
+                  <option value="">Select level</option>
+                  <option value="BEGINNER">Beginner</option>
+                  <option value="INTERMEDIATE">Intermediate</option>
+                  <option value="ADVANCED">Advanced</option>
+                </select>
+
+                {state?.error && (
+                  <p className="text-sm text-red-600">{state.error}</p>
+                )}
+
+                <div className="mt-6 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="px-4 py-2 text-sm rounded border"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className="px-4 py-2 text-sm rounded bg-black text-white"
+                  >
+                    {isPending ? "Creating..." : "Create"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

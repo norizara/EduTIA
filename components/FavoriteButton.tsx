@@ -55,8 +55,8 @@ export function FavoriteButton({
       <Heart
         className={`w-5 h-5 transition-all duration-200 ${
           optimistic
-            ? "text-red-500 fill-red-500 drop-shadow-lg"
-            : "text-white/80 fill-white/80 hover:text-red-400 hover:fill-red-400"
+            ? "text-red-500 fill-red-500 bg-red-50 p-1 rounded-full scale-110"
+            : "text-gray-400 hover:text-red-400 hover:bg-gray-100 p-1 rounded-full"
         }`}
       />
     </button>
