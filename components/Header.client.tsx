@@ -215,17 +215,6 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
                         Logout
                       </button>
                     </MenuItem>
-
-                    {user.role === "ADMIN" && (
-                      <MenuItem>
-                        <Link
-                          href="/admin"
-                          className="block px-4 py-2 text-sm text-gray-800 hover:bg-gray-100 transition"
-                        >
-                          Admin Dashboard
-                        </Link>
-                      </MenuItem>
-                    )}
                   </MenuItems>
                 </Menu>
               )}

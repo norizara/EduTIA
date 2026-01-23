@@ -8,7 +8,14 @@ export default async function AdminUsersPage() {
         select: { enrollments: true },
       },
     },
-    orderBy: { role: "asc" },
+    orderBy: [
+      { role: "desc" },
+      {
+        profile: {
+          name: "asc",
+        },
+      },
+    ],
   });
 
   return (

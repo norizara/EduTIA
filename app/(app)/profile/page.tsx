@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import ProfileContainer from "@/components/ProfileContainer";
+import ProfileContainer from "@/components/profile/ProfileContainer";
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();

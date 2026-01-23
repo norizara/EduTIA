@@ -27,6 +27,14 @@ async function main() {
     },
   });
 
+  await prisma.user.create({
+    data: {
+      email: "admin2@edutia.com",
+      password: await bcrypt.hash("admin123", 10),
+      role: "ADMIN",
+    },
+  });
+
   const student = await prisma.user.create({
     data: {
       email: "student@edutia.com",

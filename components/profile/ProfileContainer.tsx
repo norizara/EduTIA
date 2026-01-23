@@ -18,11 +18,7 @@ export default function ProfileContainer({
 
   if (isEditing) {
     return (
-      <ProfileForm
-        user={user}
-        profile={profile}
-        onCancel={() => setIsEditing(false)}
-      />
+      <ProfileForm profile={profile} onCancel={() => setIsEditing(false)} />
     );
   }
 

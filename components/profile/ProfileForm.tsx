@@ -18,13 +18,11 @@ import {
 
 type ProfileFormProps = {
   profile: Profile | null;
-  user: User;
   onCancel: () => void;
 };
 
 export default function ProfileForm({
   profile,
-  user,
   onCancel,
 }: ProfileFormProps) {
   const router = useRouter();
