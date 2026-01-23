@@ -1,4 +1,4 @@
-import { EnrolledCourseCard } from "@/components/EnrolledCourseCard";
+import { EnrolledCourseCard } from "./EnrolledCourseCard";
 
 interface EnrollmentWithCourse {
   id: string;

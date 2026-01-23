@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteCourseAction } from "@/actions/course";
+import { deleteCourseAction } from "@/actions/courseAdmin";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 

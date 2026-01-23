@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, BookOpen, Clock, PlayCircle } from "lucide-react";
 import { PathDetailUI } from "@/types/path.ui";
-import { FavoriteButton } from "./FavoriteButton";
+import { FavoriteButton } from "../FavoriteButton";
 
 export default function PathDetails({
   path,

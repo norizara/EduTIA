@@ -9,25 +9,38 @@ export default async function AdminLayout({
   await requireAdminUser();
 
   return (
-    <div className="min-h-screen flex">
-      {/* Sidebar */}
-      <aside className="w-64 bg-zinc-900 text-white p-6 space-y-4">
-        <h2 className="text-xl font-bold">Admin Panel</h2>
+    <div className="min-h-screen flex overflow-clip">
+      <aside className="w-64 bg-zinc-900 text-white p-6">
+        <div className="flex flex-col h-full justify-between">
+          <div className="space-y-4">
+            <h2 className="text-xl font-bold">Admin Panel</h2>
 
-        <nav className="space-y-2">
-          <Link href="/admin" className="block hover:underline">
-            Dashboard
+            <nav className="space-y-2">
+              <Link href="/admin" className="block hover:underline">
+                Dashboard
+              </Link>
+              <Link href="/admin/courses" className="block hover:underline">
+                Courses
+              </Link>
+              <Link href="/admin/users" className="block hover:underline">
+                Users
+              </Link>
+              <Link
+                href="/admin/corporations"
+                className="block hover:underline"
+              >
+                Corporation Requests
+              </Link>
+            </nav>
+          </div>
+
+          <Link
+            href="/"
+            className="block hover:underline text-sm text-gray-300"
+          >
+            Back to client side
           </Link>
-          <Link href="/admin/courses" className="block hover:underline">
-            Courses
-          </Link>
-          <Link href="/admin/users" className="block hover:underline">
-            Users
-          </Link>
-          <Link href="/admin/corporations" className="block hover:underline">
-            Corporation Requests
-          </Link>
-        </nav>
+        </div>
       </aside>
 
       {/* Content */}

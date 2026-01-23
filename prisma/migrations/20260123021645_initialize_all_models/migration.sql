@@ -55,7 +55,7 @@ CREATE TABLE "Profile" (
 -- CreateTable
 CREATE TABLE "CorporationVerification" (
     "id" TEXT NOT NULL,
-    "status" "CorporationStatus" NOT NULL DEFAULT 'UNVERIFIED',
+    "status" "CorporationStatus" NOT NULL DEFAULT 'PENDING',
     "verifiedAt" TIMESTAMP(3),
     "profileId" TEXT NOT NULL,
 

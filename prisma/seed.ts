@@ -69,7 +69,6 @@ async function main() {
   await prisma.corporationVerification.create({
     data: {
       profileId: corpProfile.id,
-      status: "VERIFIED",
       verifiedAt: new Date(),
     },
   });

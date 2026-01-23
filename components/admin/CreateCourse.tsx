@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { createCourseAction } from "@/actions/course";
+import { createCourseAction } from "@/actions/courseAdmin";
 import { CategoryUI } from "@/types/category.ui";
 import { useRouter } from "next/navigation";
 

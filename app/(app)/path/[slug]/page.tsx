@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { prisma } from "@/lib/prisma";
-import PathDetails from "@/components/PathDetail";
+import PathDetails from "@/components/path/PathDetail";
 import { getCurrentUser } from "@/lib/auth";
 import { PathDetailUI } from "@/types/path.ui";
 import { getNextPathCourseSlug } from "@/actions/resume";

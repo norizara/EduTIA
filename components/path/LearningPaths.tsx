@@ -1,7 +1,7 @@
 "use client";
 
 import { BookOpen, Rocket } from "lucide-react";
-import LearningPathCard from "@/components/LearningPathCard";
+import LearningPathCard from "./LearningPathCard";
 import { PathUI } from "@/types/path.ui";
 
 type LearningPathsProps = {

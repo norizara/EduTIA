@@ -3,9 +3,9 @@ export const dynamic = "force-dynamic";
 import { getCurrentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { ActiveCourseBanner } from "@/components/ActiveCourseBanner";
-import { DashboardStats } from "@/components/DashboardStats";
-import { EnrolledCourseSection } from "@/components/EnrolledCourseSection";
+import { ActiveCourseBanner } from "@/components/dashboard/ActiveCourseBanner";
+import { DashboardStats } from "@/components/dashboard/DashboardStats";
+import { EnrolledCourseSection } from "@/components/dashboard/EnrolledCourseSection";
 import { EnrollmentUI } from "@/types/enrollment.ui";
 
 export default async function DashboardPage() {

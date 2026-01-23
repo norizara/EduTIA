@@ -49,7 +49,7 @@ model Profile {
 
 model CorporationVerification {
   id         String            @id @default(uuid())
-  status     CorporationStatus @default(UNVERIFIED)
+  status     CorporationStatus @default(PENDING)
   verifiedAt DateTime?
 
   profileId  String   @unique
