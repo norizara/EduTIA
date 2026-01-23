@@ -5,8 +5,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { ActiveCourseBanner } from "@/components/dashboard/ActiveCourseBanner";
 import { DashboardStats } from "@/components/dashboard/DashboardStats";
-import { EnrolledCourseSection } from "@/components/dashboard/EnrolledCourseSection";
-import { EnrollmentUI } from "@/types/enrollment.ui";
+import { EnrolledCourseList } from "@/components/dashboard/EnrolledCourseList";
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -74,7 +73,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="flex-1 w-full min-w-0 h-auto lg:h-104">
-        <EnrolledCourseSection courses={sortedCourses} />
+        <EnrolledCourseList courses={sortedCourses} />
       </div>
 
       <div className="w-full lg:w-64 shrink-0">
