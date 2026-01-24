@@ -1,7 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 import { Profile, User } from "@prisma/client";
 import {
   User as UserIcon,
@@ -28,8 +27,13 @@ export default function ProfileForm({
   user,
   onCancel,
 }: ProfileFormProps) {
-  const router = useRouter();
   const [state, formAction, isPending] = useActionState(updateProfile, null);
+
+  useEffect(() => {
+    if (state?.success) {
+      onCancel();
+    }
+  }, [state, onCancel]);
 
   return (
     <form
