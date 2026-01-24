@@ -15,6 +15,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { updateProfile } from "@/actions/profile";
+import { useRouter } from "next/navigation";
 
 type ProfileFormProps = {
   profile: Profile | null;
@@ -27,13 +28,15 @@ export default function ProfileForm({
   user,
   onCancel,
 }: ProfileFormProps) {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState(updateProfile, null);
 
   useEffect(() => {
     if (state?.success) {
+      router.refresh();
       onCancel();
     }
-  }, [state, onCancel]);
+  }, [state, router, onCancel]);
 
   return (
     <form
@@ -114,6 +117,7 @@ export default function ProfileForm({
                         <input
                           type="text"
                           name="companyName"
+                          defaultValue={profile?.companyName ?? ""}
                           placeholder="Your company name"
                           className="form-input"
                         />
@@ -128,6 +132,7 @@ export default function ProfileForm({
                         <input
                           type="text"
                           name="companyWebsite"
+                          defaultValue={profile?.companyWebsite ?? ""}
                           placeholder="https://company.com"
                           className="form-input"
                         />
@@ -159,6 +164,7 @@ export default function ProfileForm({
                         <input
                           type="text"
                           name="pictureUrl"
+                          defaultValue={profile?.pictureUrl ?? ""}
                           placeholder="https://example.com/your-photo.jpg"
                           className="form-input"
                         />
@@ -173,6 +179,7 @@ export default function ProfileForm({
                         <input
                           type="text"
                           name="name"
+                          defaultValue={profile?.name ?? ""}
                           placeholder="Enter your full name"
                           className="form-input"
                         />
@@ -188,6 +195,13 @@ export default function ProfileForm({
                           <input
                             type="date"
                             name="dob"
+                            defaultValue={
+                              profile?.dob
+                                ? new Date(profile.dob)
+                                    .toISOString()
+                                    .split("T")[0]
+                                : ""
+                            }
                             className="form-input"
                           />
                         </FormField>
@@ -198,7 +212,11 @@ export default function ProfileForm({
                           iconBg="bg-emerald-50"
                           iconColor="text-emerald-600"
                         >
-                          <select name="gender" className="form-input">
+                          <select
+                            name="gender"
+                            defaultValue={profile?.gender ?? ""}
+                            className="form-input"
+                          >
                             <option value="">Select Gender</option>
                             <option value="MALE">Male</option>
                             <option value="FEMALE">Female</option>
@@ -225,6 +243,7 @@ export default function ProfileForm({
             <div className="p-6">
               <textarea
                 name="bio"
+                defaultValue={profile?.bio ?? ""}
                 rows={4}
                 placeholder="Tell us a bit about yourself..."
                 className="form-input resize-none"
