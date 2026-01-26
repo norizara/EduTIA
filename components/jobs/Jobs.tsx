@@ -3,13 +3,14 @@
 import Link from "next/link";
 import { useState, useMemo } from "react";
 import { Search, Filter, ChevronDown, X, Star } from "lucide-react";
-import CourseCard from "@/components/CourseCard";
+import JobCard from "./JobCard";
 import { CourseUI } from "@/types/course.ui";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CategoryUI } from "@/types/category.ui";
+import { JobUI } from "@/types/job.ui";
 
 type CoursesProps = {
-  courses: CourseUI[];
+  jobs: JobUI[];
   categories: CategoryUI[];
   isAuthenticated: boolean;
 };
@@ -22,8 +23,8 @@ const DURATION_LABELS: Record<string, string> = {
   extraLong: "20+ hours",
 };
 
-export default function Courses({
-  courses,
+export default function Jobs({
+  jobs,
   categories,
   isAuthenticated,
 }: CoursesProps) {
@@ -103,9 +104,7 @@ export default function Courses({
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3 md:flex-row">
-            <h1 className="text-lg font-bold text-slate-900">
-              {getCategory()} Courses
-            </h1>
+            <h1 className="text-lg font-bold text-slate-900">Jobs</h1>
             <div className="flex-1">
               <div className="flex items-center justify-end gap-2 w-full md:w-auto">
                 <button
@@ -144,28 +143,38 @@ export default function Courses({
 
               <div className="mb-8">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-                  Ratings
+                  Categories
                 </h3>
                 <div className="space-y-3">
-                  {["4.5", "4.0", "3.5", "3.0"].map((rating) => (
+                  {categories.map((category) => (
                     <label
-                      key={rating}
+                      key={category.id}
                       className="flex items-center gap-3 group cursor-pointer"
                     >
-                      <div className="relative w-5 h-5">
+                      <div className="relative flex items-center">
                         <input
                           type="checkbox"
-                          checked={params.get("rating") === rating}
-                          onChange={() => handleRatingToggle(rating)}
-                          className="peer appearance-none w-5 h-5 rounded-full border-2 border-slate-300 bg-white checked:border-eduBlue transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-eduBlue/40"
+                          checked={params
+                            .getAll("category")
+                            .includes(category.slug)}
+                          className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
                         />
-
-                        <span className="pointer-events-none absolute inset-1 rounded-full bg-eduBlue opacity-0 peer-checked:opacity-100 transition-opacity" />
+                        <svg
+                          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
                       </div>
-
-                      <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                      <span className="text-slate-600 group-hover:text-eduBlue transition-colors">
-                        {rating}+
+                      <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
+                        {category.name}
                       </span>
                     </label>
                   ))}
@@ -174,10 +183,16 @@ export default function Courses({
 
               <div className="mb-8">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-                  Levels
+                  Types
                 </h3>
                 <div className="space-y-3">
-                  {["BEGINNER", "INTERMEDIATE", "ADVANCED"].map((level) => (
+                  {[
+                    "FULL_TIME",
+                    "PART_TIME",
+                    "CONTRACT",
+                    "FREELANCE",
+                    "INTERNSHIP",
+                  ].map((level) => (
                     <label
                       key={level}
                       className="flex items-center gap-3 group cursor-pointer"
@@ -213,10 +228,49 @@ export default function Courses({
 
               <div className="mb-8">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
-                  Duration
+                  Work Modes
                 </h3>
                 <div className="space-y-3">
-                  {["extraShort", "short", "medium", "long", "extraLong"].map(
+                  {["ONSITE", "REMOTE", "HYBRID"].map((level) => (
+                    <label
+                      key={level}
+                      className="flex items-center gap-3 group cursor-pointer"
+                    >
+                      <div className="relative flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={params.getAll("level").includes(level)}
+                          onChange={() => handleLevelToggle(level)}
+                          className="peer appearance-none w-5 h-5 border-2 border-slate-300 rounded-md checked:bg-eduBlue checked:border-eduBlue transition-all"
+                        />
+                        <svg
+                          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+                      <span className="text-slate-600 group-hover:text-eduBlue capitalize transition-colors">
+                        {level.toLowerCase()}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mb-8">
+                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-4">
+                  Salary
+                </h3>
+                <div className="space-y-3">
+                  {["< 5 mil", "5-10 mil", "10-20 mil", "> 20 mil"].map(
                     (duration) => (
                       <label
                         key={duration}
@@ -247,7 +301,7 @@ export default function Courses({
                         </div>
 
                         <span className="text-slate-600 group-hover:text-eduBlue transition-colors">
-                          {DURATION_LABELS[duration]}
+                          {duration}
                         </span>
                       </label>
                     ),
@@ -269,10 +323,8 @@ export default function Courses({
             <div className="flex items-center justify-between mb-6">
               <p className="text-slate-500 font-medium">
                 Showing{" "}
-                <span className="text-slate-900 font-bold">
-                  {courses.length}
-                </span>{" "}
-                courses
+                <span className="text-slate-900 font-bold">{jobs.length}</span>{" "}
+                jobs
               </p>
 
               <div className="flex items-center gap-2">
@@ -295,14 +347,10 @@ export default function Courses({
               </div>
             </div>
 
-            {courses.length > 0 ? (
-              <div className="grid gap-6 mx-10 sm:grid-cols-2 sm:mx-0 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
-                {courses.map((course) => (
-                  <CourseCard
-                    key={course.id}
-                    course={course}
-                    isAuthenticated={isAuthenticated}
-                  />
+            {jobs.length > 0 ? (
+              <div className="grid gap-6 mx-10 md:grid-cols-2 sm:mx-0">
+                {jobs.map((job) => (
+                  <JobCard key={job.id} job={job} />
                 ))}
               </div>
             ) : (

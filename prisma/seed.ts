@@ -71,6 +71,7 @@ async function main() {
         userId: corp.id,
         companyName: "TechCorp Solutions",
         companyWebsite: "https://techcorp.com",
+        companyAddress: "Jakarta",
         bio: "Enterprise technology solutions provider",
       },
     ],

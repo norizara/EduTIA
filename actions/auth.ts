@@ -16,6 +16,9 @@ export async function loginAction(_prevState: any, formData: FormData) {
 
     const user = await prisma.user.findUnique({
       where: { email },
+      include: {
+        profile: true,
+      },
     });
 
     if (!user) {
@@ -42,17 +45,12 @@ export async function loginAction(_prevState: any, formData: FormData) {
       maxAge: 60 * 60 * 24 * 7,
     });
 
-    const profile = await prisma.profile.findFirst({
-      where: { userId: user.id },
-    });
-
     const incomplete =
-      (user.role === "EDUCATEE" &&
-        (!profile || !profile.name || !profile.dob || !profile.gender)) ||
-      (user.role === "COMPANY" &&
-        (!profile || !profile.companyName || !profile.companyWebsite));
+      user.role === "EDUCATEE"
+        ? !user.profile?.name || !user.profile?.dob
+        : !user.profile?.companyName || !user.profile?.companyWebsite;
 
-    return { success: true, role: user.role, status: incomplete };
+    return { success: true, role: user.role, incomplete };
   } catch (error) {
     console.error(error);
     return { error: "Something went wrong" };
@@ -94,6 +92,9 @@ export async function signupAction(_prevState: any, formData: FormData) {
         email,
         password: hashedPassword,
         role,
+        profile: {
+          create: {},
+        },
       },
     });
 

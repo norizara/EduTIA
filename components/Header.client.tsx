@@ -67,12 +67,12 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
     router.push(`${pathname}?${params.toString()}`);
   }
 
-  const isCoursesPage = pathname === "/courses";
+  const isRelative = pathname === "/courses" || pathname === "/jobs";
 
   return (
     <header
       className={`${
-        isCoursesPage ? "relative" : "sticky top-0"
+        isRelative ? "relative" : "sticky top-0"
       } z-30 bg-white border-b border-gray-300 transition-all`}
     >
       <nav
@@ -105,7 +105,7 @@ export default function HeaderClient({ user, categories }: HeaderProps) {
             {({ close }) => (
               <>
                 <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold text-gray-900 focus:outline-none">
-                  Category
+                  Courses
                   <ChevronDownIcon
                     aria-hidden="true"
                     className="size-5 flex-none text-gray-400"

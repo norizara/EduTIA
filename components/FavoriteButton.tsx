@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { Heart } from "lucide-react";
 import { toggleFavorite } from "@/actions/favorite";
 import { useRouter } from "next/navigation";
@@ -56,7 +56,7 @@ export function FavoriteButton({
         className={`w-5 h-5 transition-all duration-200 ${
           optimistic
             ? "text-red-500 fill-red-500 bg-red-50 p-1 rounded-full scale-110"
-            : "text-gray-400 hover:text-red-400 hover:bg-gray-100 p-1 rounded-full"
+            : "text-gray-800 hover:text-red-400 hover:bg-gray-100 p-1 rounded-full"
         }`}
       />
     </button>
