@@ -33,14 +33,20 @@ model User {
 
 model Profile {
   id             String   @id @default(uuid())
+  pictureUrl     String?
+  bio            String?
+  
   name           String?
   dob            DateTime?
   gender         Gender?
-  pictureUrl     String?
-  bio            String?
-  companyName    String?
-  companyWebsite String?
-  companyAddress String?
+
+  companyName     String?
+  companyWebsite  String?
+  companyAddress  String?
+  totalJobs       Int @default(0)
+  totalApplicants Int @default(0)
+  totalHired      Int @default(0)
+
 
   userId         String   @unique
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -52,6 +58,8 @@ model CompanyVerification {
   id         String            @id @default(uuid())
   status     CompanyStatus @default(PENDING)
   verifiedAt DateTime?
+  verifiedBy String?
+  rejectedAt DateTime?
 
   profileId  String   @unique
   profile    Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
@@ -278,6 +286,7 @@ model JobPosting {
   slug        String   @unique
   description String
 
+  views       Int @default(0)
   applicators Int @default(0)
   hired       Int @default(0)
 
@@ -287,7 +296,7 @@ model JobPosting {
   status      JobStatus @default(DRAFT)
   type        JobType
   workMode    WorkMode
-  level       ExperienceLevel
+  level       ExperienceLevel?
 
   salaryMin   Int?
   salaryMax   Int?
@@ -300,6 +309,7 @@ model JobPosting {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   expiresAt   DateTime?
+  deletedAt   DateTime?
 
   @@index([slug])
   @@index([status])
@@ -309,15 +319,20 @@ model JobPosting {
 }
 
 model JobApplication {
-  id        String    @id @default(uuid())
-  status    ApplicationStatus @default(APPLIED)
-  appliedAt DateTime @default(now())
+  id          String   @id @default(uuid())
+  status      ApplicationStatus @default(APPLIED)
+  appliedAt   DateTime @default(now())
+  reviewedAt  DateTime?
+  decidedAt   DateTime?
 
-  userId    String
-  jobId     String
+  userId      String
+  jobId       String
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   job  JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+  @@index([status])
 }
 
 model Skill {

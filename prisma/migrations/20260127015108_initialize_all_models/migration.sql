@@ -49,14 +49,17 @@ CREATE TABLE "User" (
 -- CreateTable
 CREATE TABLE "Profile" (
     "id" TEXT NOT NULL,
+    "pictureUrl" TEXT,
+    "bio" TEXT,
     "name" TEXT,
     "dob" TIMESTAMP(3),
     "gender" "Gender",
-    "pictureUrl" TEXT,
-    "bio" TEXT,
     "companyName" TEXT,
     "companyWebsite" TEXT,
     "companyAddress" TEXT,
+    "totalJobs" INTEGER NOT NULL DEFAULT 0,
+    "totalApplicants" INTEGER NOT NULL DEFAULT 0,
+    "totalHired" INTEGER NOT NULL DEFAULT 0,
     "userId" TEXT NOT NULL,
 
     CONSTRAINT "Profile_pkey" PRIMARY KEY ("id")
@@ -67,6 +70,8 @@ CREATE TABLE "CompanyVerification" (
     "id" TEXT NOT NULL,
     "status" "CompanyStatus" NOT NULL DEFAULT 'PENDING',
     "verifiedAt" TIMESTAMP(3),
+    "verifiedBy" TEXT,
+    "rejectedAt" TIMESTAMP(3),
     "profileId" TEXT NOT NULL,
 
     CONSTRAINT "CompanyVerification_pkey" PRIMARY KEY ("id")
@@ -250,19 +255,21 @@ CREATE TABLE "JobPosting" (
     "title" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "views" INTEGER NOT NULL DEFAULT 0,
     "applicators" INTEGER NOT NULL DEFAULT 0,
     "hired" INTEGER NOT NULL DEFAULT 0,
     "categoryId" TEXT NOT NULL,
     "status" "JobStatus" NOT NULL DEFAULT 'DRAFT',
     "type" "JobType" NOT NULL,
     "workMode" "WorkMode" NOT NULL,
-    "level" "ExperienceLevel" NOT NULL,
+    "level" "ExperienceLevel",
     "salaryMin" INTEGER,
     "salaryMax" INTEGER,
     "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "expiresAt" TIMESTAMP(3),
+    "deletedAt" TIMESTAMP(3),
 
     CONSTRAINT "JobPosting_pkey" PRIMARY KEY ("id")
 );
@@ -272,6 +279,8 @@ CREATE TABLE "JobApplication" (
     "id" TEXT NOT NULL,
     "status" "ApplicationStatus" NOT NULL DEFAULT 'APPLIED',
     "appliedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "reviewedAt" TIMESTAMP(3),
+    "decidedAt" TIMESTAMP(3),
     "userId" TEXT NOT NULL,
     "jobId" TEXT NOT NULL,
 
@@ -414,6 +423,12 @@ CREATE INDEX "JobPosting_userId_idx" ON "JobPosting"("userId");
 
 -- CreateIndex
 CREATE INDEX "JobPosting_status_categoryId_idx" ON "JobPosting"("status", "categoryId");
+
+-- CreateIndex
+CREATE INDEX "JobApplication_status_idx" ON "JobApplication"("status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "JobApplication_userId_jobId_key" ON "JobApplication"("userId", "jobId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Skill_userId_name_key" ON "Skill"("userId", "name");

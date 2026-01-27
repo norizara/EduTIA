@@ -11,6 +11,10 @@ import {
   Mail,
   FileText,
   CaseSensitive,
+  HeartHandshake,
+  TicketCheck,
+  FileUser,
+  MapPinned,
 } from "lucide-react";
 
 type ProfileViewProps = {
@@ -95,60 +99,71 @@ export default function ProfileView({
                         </h2>
                       </div>
                     </div>
-                    <div className="p-6 space-y-5 flex-1 flex flex-col">
-                      {profile?.companyName || profile?.companyWebsite ? (
-                        <>
-                          <DetailItem
-                            icon={<Building2 className="w-4 h-4" />}
-                            label="Company Name"
-                            value={profile?.companyName}
-                            iconBg="bg-orange-50"
-                            iconColor="text-orange-600"
-                          />
-                          <DetailItem
-                            icon={<Globe className="w-4 h-4" />}
-                            label="Website"
-                            value={
-                              profile?.companyWebsite ? (
-                                <a
-                                  href={websiteUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1.5 text-eduBlue hover:text-blue-700 transition-colors"
+                    <div className="sm:grid sm:grid-cols-2">
+                      <div className="pb-5 p-6 sm:pb-6 space-y-5 flex-1 flex flex-col">
+                        <DetailItem
+                          icon={<Building2 className="w-4 h-4" />}
+                          label="Company Name"
+                          value={profile?.companyName}
+                          iconBg="bg-orange-50"
+                          iconColor="text-orange-600"
+                        />
+                        <DetailItem
+                          icon={<Globe className="w-4 h-4" />}
+                          label="Website"
+                          value={
+                            profile?.companyWebsite ? (
+                              <a
+                                href={websiteUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-eduBlue hover:text-blue-700 transition-colors"
+                              >
+                                {profile.companyWebsite}
+                                <svg
+                                  className="w-3 h-3 opacity-60"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
                                 >
-                                  {profile.companyWebsite}
-                                  <svg
-                                    className="w-3 h-3 opacity-60"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                    />
-                                  </svg>
-                                </a>
-                              ) : null
-                            }
-                            iconBg="bg-cyan-50"
-                            iconColor="text-cyan-600"
-                          />
-                        </>
-                      ) : (
-                        <div className="flex-1 flex items-center justify-center">
-                          <div className="text-center py-6">
-                            <div className="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center">
-                              <Building2 className="w-6 h-6 text-slate-400" />
-                            </div>
-                            <p className="text-sm text-slate-500">
-                              No company info added yet
-                            </p>
-                          </div>
-                        </div>
-                      )}
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                  />
+                                </svg>
+                              </a>
+                            ) : null
+                          }
+                          iconBg="bg-cyan-50"
+                          iconColor="text-cyan-600"
+                        />
+
+                        <DetailItem
+                          icon={<MapPinned className="w-4 h-4" />}
+                          label="Company Address"
+                          value={profile?.companyAddress}
+                          iconBg="bg-blue-50"
+                          iconColor="text-blue-600"
+                        />
+                      </div>
+                      <div className="pt-0 p-6 sm:pt-6 space-y-5 flex-1 flex flex-col">
+                        <DetailItem
+                          icon={<MapPinned className="w-4 h-4" />}
+                          label="Job Postings"
+                          value={profile?.totalJobs}
+                          iconBg="bg-blue-50"
+                          iconColor="text-blue-600"
+                        />
+                        <DetailItem
+                          icon={<MapPinned className="w-4 h-4" />}
+                          label="Hired Educatee"
+                          value={profile?.totalHired}
+                          iconBg="bg-blue-50"
+                          iconColor="text-blue-600"
+                        />
+                      </div>
                     </div>
                   </div>
                 );
@@ -199,25 +214,25 @@ export default function ProfileView({
                       </div>
                       <div className="pt-0 p-6 sm:pt-6 space-y-5 flex-1 flex flex-col">
                         <DetailItem
-                          icon={<CaseSensitive className="w-4 h-4" />}
+                          icon={<HeartHandshake className="w-4 h-4" />}
                           label="Enrollments"
                           value={profile?.name}
-                          iconBg="bg-blue-50"
-                          iconColor="text-blue-600"
+                          iconBg="bg-yellow-50"
+                          iconColor="text-yellow-600"
                         />
                         <DetailItem
-                          icon={<Calendar className="w-4 h-4" />}
+                          icon={<TicketCheck className="w-4 h-4" />}
                           label="Certificates"
                           value={formatDate(profile?.dob)}
-                          iconBg="bg-purple-50"
-                          iconColor="text-purple-600"
+                          iconBg="bg-orange-50"
+                          iconColor="text-orange-600"
                         />
                         <DetailItem
-                          icon={<Users className="w-4 h-4" />}
+                          icon={<FileUser className="w-4 h-4" />}
                           label="Jobs applications"
                           value={formatGender(profile?.gender)}
-                          iconBg="bg-emerald-50"
-                          iconColor="text-emerald-600"
+                          iconBg="bg-cyan-50"
+                          iconColor="text-cyan-600"
                         />
                       </div>
                     </div>

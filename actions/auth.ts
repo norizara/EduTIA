@@ -50,7 +50,7 @@ export async function loginAction(_prevState: any, formData: FormData) {
         ? !user.profile?.name || !user.profile?.dob
         : !user.profile?.companyName || !user.profile?.companyWebsite;
 
-    return { success: true, role: user.role, incomplete };
+    return { success: true, role: user.role, status: incomplete };
   } catch (error) {
     console.error(error);
     return { error: "Something went wrong" };

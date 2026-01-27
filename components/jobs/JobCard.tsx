@@ -99,11 +99,14 @@ export default function JobCard({
             <p className="text-sm font-semibold text-black">Tags:</p>
 
             <div className="flex items-center gap-2 flex-wrap pt-2">
-              <span
-                className={`text-xs font-semibold px-3 py-1 rounded-full ${EXPERIENCE_LEVEL_STYLES[job.level]}`}
-              >
-                {EXPERIENCE_LEVEL_LABELS[job.level]}
-              </span>
+              {job.level ? (
+                <span
+                  className={`text-xs font-semibold px-3 py-1 rounded-full ${EXPERIENCE_LEVEL_STYLES[job.level]}`}
+                >
+                  {EXPERIENCE_LEVEL_LABELS[job.level]}
+                </span>
+              ) : null}
+
               <span
                 className={`text-xs font-semibold px-3 py-1 rounded-full ${JOB_TYPE_STYLES[job.type]}`}
               >
