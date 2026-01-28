@@ -127,12 +127,6 @@ export default function Jobs({
     });
   }
 
-  function handleSort(value: string): void {
-    updateParams((params) => {
-      value === "default" ? params.delete("sort") : params.set("sort", value);
-    });
-  }
-
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
       <div className="bg-white border-b border-slate-200">
@@ -378,7 +372,7 @@ export default function Jobs({
 
               <Link
                 href="/jobs"
-                className="mt-6 block w-full text-center py-3 text-sm font-bold text-slate-600 border border-slate-300 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                className="block w-full text-center py-3 text-sm font-bold text-slate-600 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors"
               >
                 Clear Filters
               </Link>
@@ -393,25 +387,6 @@ export default function Jobs({
                 <span className="text-slate-900 font-bold">{jobs.length}</span>{" "}
                 jobs
               </p>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-slate-500 hidden sm:inline">
-                  Sort by:
-                </span>
-                <div className="relative group">
-                  <select
-                    value={params.get("sort") ?? "default"}
-                    onChange={(e) => handleSort(e.target.value)}
-                    className="appearance-none bg-white border border-slate-200 pl-4 pr-10 py-2 rounded-lg text-sm font-bold text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-eduBlue/20 focus:border-eduBlue"
-                  >
-                    <option value="default">Default</option>
-                    <option value="rating">Highest Rated</option>
-                    <option value="review">Most Reviewed</option>
-                    <option value="newest">Newest</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
-                </div>
-              </div>
             </div>
 
             {jobs.length > 0 ? (

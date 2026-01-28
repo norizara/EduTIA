@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import CourseItemViewer from "@/components/CourseItemViewer";
 
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   params: Promise<{
     slug: string;

@@ -11,6 +11,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import BackButton from "./BackButton";
+import { handleMark } from "@/actions/markItem";
 
 interface CourseItemViewerProps {
   item: {
@@ -45,34 +46,8 @@ export default function CourseItemViewer({
   nextItem,
 }: CourseItemViewerProps) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const [isCompleted, setIsCompleted] = useState(initialCompleted);
-  // const [state, formAction, isPending] = useActionState(handleMark, null);
-
-  const handleComplete = async () => {
-    const newStatus = !isCompleted;
-    setIsCompleted(newStatus);
-
-    try {
-      if (newStatus) {
-        if (item.type === "MODULE" && item.module) {
-          await fetch(`/api/modules/${item.module.id}/complete`, {
-            method: "POST",
-          });
-        } else if (item.type === "WORKSHOP" && item.workshop) {
-          await fetch(`/api/workshops/${item.workshop.id}/submissions`, {
-            method: "POST",
-            body: JSON.stringify({ submissionUrl: "MARKED_AS_COMPLETE" }),
-          });
-        }
-      } else {
-      }
-
-      router.refresh();
-    } catch (error) {
-      console.error("Error updating status:", error);
-      setIsCompleted(!newStatus);
-    }
-  };
 
   const isVideo = (url: string) => {
     return (
@@ -81,6 +56,14 @@ export default function CourseItemViewer({
       url.includes("vimeo.com") ||
       url.endsWith(".mp4")
     );
+  };
+
+  const handleClick = async () => {
+    setLoading(true);
+    await handleMark(item.id);
+    setIsCompleted((v) => !v);
+    router.refresh();
+    setLoading(false);
   };
 
   return (
@@ -146,7 +129,7 @@ export default function CourseItemViewer({
 
             <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
               <button
-                onClick={handleComplete}
+                onClick={handleClick}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
                   isCompleted
                     ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-red-600 hover:border-red-200"
@@ -184,7 +167,7 @@ export default function CourseItemViewer({
 
             <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
               <button
-                onClick={handleComplete}
+                onClick={handleClick}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
                   isCompleted
                     ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-red-600 hover:border-red-200"

@@ -20,7 +20,6 @@ model User {
   favorites             Favorite[]
   reviews               Review[]
   enrollments           Enrollment[]
-  workshopRegistrations WorkshopRegistration[]
   workshopSubmissions   WorkshopSubmission[]
   moduleProgresses      ModuleProgress[]
   jobPostings           JobPosting[]
@@ -177,24 +176,10 @@ model Workshop {
 
   courseItem   CourseItem?
 
-  registrations WorkshopRegistration[]
   submissions   WorkshopSubmission[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model WorkshopRegistration {
-  id           String   @id @default(uuid())
-  registeredAt DateTime @default(now())
-
-  userId       String
-  workshopId   String
-
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  workshop     Workshop @relation(fields: [workshopId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, workshopId])
 }
 
 model WorkshopSubmission {
