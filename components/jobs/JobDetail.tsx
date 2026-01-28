@@ -10,6 +10,8 @@ import {
   Send,
   Clock,
   Bookmark,
+  ArrowUpDown,
+  Banknote,
 } from "lucide-react";
 import { JobUI, TYPE_LABELS } from "@/types/job.ui";
 import { ApplicationStatus } from "@prisma/client";
@@ -102,8 +104,15 @@ export default function JobDetail({
   };
 
   const hireRate =
-    (job.user.profile?.totalHired ?? 0) /
-    (job.user.profile?.totalApplicants ?? 1);
+    ((job.user.profile?.totalHired ?? 0) /
+      Math.max(job.user.profile?.totalApplicants ?? 1, 1)) *
+    100;
+
+  const websiteUrl = job.user.profile?.companyWebsite
+    ? job.user.profile.companyWebsite.startsWith("http")
+      ? job.user.profile.companyWebsite
+      : `https://${job.user.profile.companyWebsite}`
+    : "#";
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -118,21 +127,25 @@ export default function JobDetail({
             <h1 className="text-4xl font-extrabold">{job.title}</h1>
             <div className="flex flex-wrap gap-4 text-sm text-slate-300">
               <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4" />
-                {job.level || "ANY"}
+                <MapPin className="w-4 h-4" />
+                {job.location?.toUpperCase() ??
+                  job.user.profile?.companyAddress?.toUpperCase() ??
+                  "JOB LOCATION"}
               </div>
               <div className="flex items-center gap-2">
                 <Briefcase className="w-4 h-4" />
+                {job.level || "ANY"}
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-4 h-4" />
                 {job.type.replace("_", " ")}
               </div>
-
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" />
+                <ArrowUpDown className="w-4 h-4" />
                 {job.workMode}
               </div>
-
               <div className="flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
+                <Banknote className="w-4 h-4" />
                 {formatPaycheck(job.paycheckMin, job.paycheckMax)}
               </div>
             </div>
@@ -178,7 +191,29 @@ export default function JobDetail({
                   {job.user.profile?.companyAddress || "Company Address"}
                 </p>
                 <p className="text-slate-700">
-                  {job.user.profile?.companyWebsite || "Company Website"}
+                  {job.user.profile?.companyWebsite ? (
+                    <a
+                      href={websiteUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-eduBlue hover:text-blue-700 transition-colors"
+                    >
+                      {job.user.profile.companyWebsite}
+                      <svg
+                        className="w-3 h-3 opacity-60"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </a>
+                  ) : null}
                 </p>
               </div>
             </div>
@@ -232,6 +267,15 @@ export default function JobDetail({
 
           <div className="bg-white rounded-xl border p-6 space-y-3">
             <h3 className="font-bold text-slate-900">Job Info</h3>
+
+            <div className="flex justify-between text-sm">
+              <span>Location</span>
+              <span className="capitalize">
+                {job.location ??
+                  job.user.profile?.companyAddress ??
+                  "Job Location"}
+              </span>
+            </div>
 
             <div className="flex justify-between text-sm">
               <span>Level</span>
