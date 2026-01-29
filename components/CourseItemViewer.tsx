@@ -1,13 +1,12 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   CheckCircle,
   ChevronLeft,
   ChevronRight,
-  XCircle,
   ExternalLink,
 } from "lucide-react";
 import BackButton from "./BackButton";
@@ -41,14 +40,10 @@ interface CourseItemViewerProps {
 export default function CourseItemViewer({
   item,
   courseSlug,
-  isCompleted: initialCompleted,
+  isCompleted: isCompleted,
   prevItem,
   nextItem,
 }: CourseItemViewerProps) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(initialCompleted);
-
   const isVideo = (url: string) => {
     return (
       url.includes("youtube.com") ||
@@ -56,14 +51,6 @@ export default function CourseItemViewer({
       url.includes("vimeo.com") ||
       url.endsWith(".mp4")
     );
-  };
-
-  const handleClick = async () => {
-    setLoading(true);
-    await handleMark(item.id);
-    setIsCompleted((v) => !v);
-    router.refresh();
-    setLoading(false);
   };
 
   return (
@@ -128,26 +115,17 @@ export default function CourseItemViewer({
             )}
 
             <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
-              <button
-                onClick={handleClick}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                  isCompleted
-                    ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-red-600 hover:border-red-200"
-                    : "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
-                }`}
-              >
-                {isCompleted ? (
-                  <>
-                    <XCircle className="w-5 h-5" />
-                    Mark as Incomplete
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-5 h-5" />
-                    Mark as Complete
-                  </>
-                )}
-              </button>
+              <form action={handleMark}>
+                <input type="hidden" name="courseItemId" value={item.id} />
+
+                <button
+                  className={`flex items-center justify-center h-10 w-45 rounded-xl font-bold ${
+                    isCompleted ? "bg-white border" : "bg-blue-600 text-white"
+                  }`}
+                >
+                  {isCompleted ? "Mark as Incomplete" : "Mark as Complete"}
+                </button>
+              </form>
             </div>
           </div>
         )}
@@ -166,26 +144,18 @@ export default function CourseItemViewer({
             </div>
 
             <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
-              <button
-                onClick={handleClick}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
-                  isCompleted
-                    ? "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-red-600 hover:border-red-200"
-                    : "bg-blue-600 hover:bg-blue-700 text-white shadow-md hover:shadow-lg"
-                }`}
-              >
-                {isCompleted ? (
-                  <>
-                    <XCircle className="w-5 h-5" />
-                    Mark as Incomplete
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-5 h-5" />
-                    Mark as Complete
-                  </>
-                )}
-              </button>
+              <form action={handleMark}>
+                <input type="hidden" name="courseItemId" value={item.id} />
+
+                <button
+                  type="submit"
+                  className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold ${
+                    isCompleted ? "bg-white border" : "bg-blue-600 text-white"
+                  }`}
+                >
+                  {isCompleted ? "Mark as Incomplete" : "Mark as Complete"}
+                </button>
+              </form>
             </div>
           </div>
         )}

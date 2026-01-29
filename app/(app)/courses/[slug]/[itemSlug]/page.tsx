@@ -128,7 +128,7 @@ export default async function CourseItemPage({ params }: PageProps) {
 
   const isCompleted =
     item.type === "MODULE"
-      ? (item.module?.progresses.length ?? 0) > 0
+      ? !!item.module?.progresses?.[0]?.completedAt
       : (item.workshop?.submissions.length ?? 0) > 0;
 
   const submission =

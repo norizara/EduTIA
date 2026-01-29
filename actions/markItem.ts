@@ -4,56 +4,72 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
-export async function handleMark(courseItemId: string) {
-  try {
-    const user = await getCurrentUser();
-    if (!user) throw new Error("Unauthorized");
+export async function handleMark(formData: FormData) {
+  const courseItemId = formData.get("courseItemId") as string;
 
-    const item = await prisma.courseItem.findUnique({
-      where: { id: courseItemId },
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const item = await prisma.courseItem.findUnique({
+    where: { id: courseItemId },
+    include: { course: true },
+  });
+
+  if (!item || item.type !== "MODULE") return;
+
+  const progress = await prisma.moduleProgress.findUnique({
+    where: {
+      userId_moduleId: {
+        userId: user.id,
+        moduleId: item.moduleId!,
+      },
+    },
+  });
+
+  if (!progress) {
+    await prisma.moduleProgress.create({
+      data: {
+        userId: user.id,
+        moduleId: item.moduleId!,
+        completedAt: new Date(),
+      },
     });
-
-    if (!item || item.type !== "MODULE") return;
-
-    const progress = await prisma.moduleProgress.findUnique({
+  } else {
+    await prisma.moduleProgress.update({
       where: {
         userId_moduleId: {
           userId: user.id,
           moduleId: item.moduleId!,
         },
       },
+      data: {
+        completedAt: progress.completedAt ? null : new Date(),
+      },
     });
-
-    if (!progress) {
-      await prisma.moduleProgress.create({
-        data: {
-          userId: user.id,
-          moduleId: item.moduleId!,
-          completedAt: new Date(),
-        },
-      });
-    } else {
-      await prisma.moduleProgress.update({
-        where: {
-          userId_moduleId: {
-            userId: user.id,
-            moduleId: item.moduleId!,
-          },
-        },
-        data: {
-          completedAt: progress.completedAt ? null : new Date(),
-        },
-      });
-    }
-
-    revalidatePath("/courses");
-  } catch (error) {
-    console.error(error);
   }
+
+  const percentage = await recalculateProgress(user.id, item.courseId);
+
+  await prisma.enrollment.update({
+    where: {
+      userId_courseId: {
+        userId: user.id,
+        courseId: item.courseId,
+      },
+    },
+    data: {
+      progressPercent: percentage,
+      status: percentage === 100 ? "COMPLETED" : "IN_PROGRESS",
+    },
+  });
+
+  console.log(item.slug);
+
+  revalidatePath(`/courses/${item.course.slug}/${item.slug}`);
 }
 
 async function recalculateProgress(userId: string, courseId: string) {
-  const courseItems = await prisma.courseItem.findMany({
+  const items = await prisma.courseItem.findMany({
     where: { courseId },
     include: {
       module: {
@@ -73,11 +89,9 @@ async function recalculateProgress(userId: string, courseId: string) {
     },
   });
 
-  const totalItems = courseItems.length;
+  if (!items.length) return 0;
 
-  if (totalItems === 0) return 0;
-
-  const completedItems = courseItems.filter((item) => {
+  const completed = items.filter((item) => {
     if (item.type === "MODULE") {
       return !!item.module?.progresses?.[0]?.completedAt;
     }
@@ -89,5 +103,5 @@ async function recalculateProgress(userId: string, courseId: string) {
     return false;
   }).length;
 
-  return Math.round((completedItems / totalItems) * 100);
+  return Math.round((completed / items.length) * 100);
 }
