@@ -12,22 +12,23 @@ import {
   Banknote,
 } from "lucide-react";
 import { JobUI } from "@/types/job.ui";
-import { ApplicationStatus } from "@prisma/client";
+import { ApplicationStatus, User } from "@prisma/client";
 import BackButton from "../BackButton";
+import { applyJob } from "@/actions/applyJob";
 
 interface JobDetailsProps {
   job: JobUI;
   applicationStatus: ApplicationStatus | null;
-  isAuthenticated: boolean;
+  user: User | null;
 }
 
 export default function JobDetail({
   job,
   applicationStatus,
-  isAuthenticated,
+  user,
 }: JobDetailsProps) {
   const renderApplyButton = () => {
-    if (!isAuthenticated) {
+    if (!user) {
       return (
         <Link
           href="/login"
@@ -37,6 +38,8 @@ export default function JobDetail({
         </Link>
       );
     }
+
+    if (user.role !== "EDUCATEE") return;
 
     switch (applicationStatus) {
       case "APPLIED":
@@ -71,7 +74,7 @@ export default function JobDetail({
 
       default:
         return (
-          <form action={`/jobs/${job.slug}/apply`} method="POST">
+          <form action={applyJob.bind(null, job.id, job.slug)}>
             <button
               type="submit"
               className="w-full flex items-center justify-center gap-2 bg-eduBlue hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
@@ -251,15 +254,15 @@ export default function JobDetail({
 
             <div className="pt-4 border-t flex flex-col gap-3">
               {renderApplyButton()}
-              <form action={`/jobs/${job.slug}/apply`} method="POST">
+              {/* <form action={applyJob.bind(null, job.id, job.slug)}>
                 <button
                   type="submit"
                   className="w-full flex items-center justify-center gap-2 text-eduBlue hover:text-eduBlue/80 py-3 rounded-lg font-semibold"
                 >
-                  {/* <Bookmark className="w-5 h-5" />
-                  Save Job */}
+                  <Bookmark className="w-5 h-5" />
+                  Save Job
                 </button>
-              </form>
+              </form> */}
             </div>
           </div>
 

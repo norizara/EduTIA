@@ -1,28 +1,36 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { createJobAction } from "@/actions/jobManagement";
+import { updateJob } from "@/actions/jobManagement";
 import { useRouter } from "next/navigation";
 import { JobCategory } from "@prisma/client";
+import { JobUI } from "@/types/job.ui";
 
-export default function CreateJobPopover({
+export default function UpdateJobPopover({
+  job,
   categories,
 }: {
+  job: JobUI;
   categories: JobCategory[];
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [state, formAction, isPending] = useActionState(createJobAction, null);
+
+  const [state, formAction, isPending] = useActionState(updateJob, null);
 
   useEffect(() => {
     if (state?.success) {
       setOpen(false);
       router.refresh();
     }
-  }, [state, router]);
+  }, [state]);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
     return () => {
       document.body.style.overflow = "";
     };
@@ -30,20 +38,19 @@ export default function CreateJobPopover({
 
   return (
     <>
-      {/* Trigger */}
       <button
         onClick={() => setOpen(true)}
         className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
       >
-        Create Job
+        Update Job
       </button>
 
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="relative w-full max-w-xl max-h-[90vh] rounded-xl bg-white shadow-xl flex flex-col">
             {/* Header */}
-            <div className="shrink-0 border-b px-6 py-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Create Job</h2>
+            <div className="flex items-center justify-between border-b px-6 py-4 shrink-0">
+              <h2 className="text-lg font-semibold">Update Job</h2>
               <button
                 onClick={() => setOpen(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -52,12 +59,12 @@ export default function CreateJobPopover({
               </button>
             </div>
 
-            {/* Scrollable Content */}
             <form
               id="job-form"
               action={formAction}
               className="flex-1 overflow-y-auto px-6 py-4 space-y-4"
             >
+              <input type="hidden" name="slug" defaultValue={job.slug} />
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium mb-1">
@@ -65,7 +72,7 @@ export default function CreateJobPopover({
                 </label>
                 <input
                   name="title"
-                  required
+                  defaultValue={job.title}
                   className="w-full rounded-md border px-3 py-2"
                 />
               </div>
@@ -78,7 +85,7 @@ export default function CreateJobPopover({
                 <textarea
                   name="description"
                   rows={3}
-                  required
+                  defaultValue={job.description}
                   className="w-full rounded-md border px-3 py-2 resize-none"
                 />
               </div>
@@ -90,6 +97,7 @@ export default function CreateJobPopover({
                 </label>
                 <input
                   name="location"
+                  defaultValue={job.location || ""}
                   className="w-full rounded-md border px-3 py-2"
                 />
               </div>
@@ -102,10 +110,9 @@ export default function CreateJobPopover({
                   </label>
                   <select
                     name="categoryId"
-                    required
+                    defaultValue={job.category.id}
                     className="w-full rounded-md border px-3 py-2"
                   >
-                    <option value="">Select category</option>
                     {categories.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -120,7 +127,7 @@ export default function CreateJobPopover({
                   </label>
                   <select
                     name="type"
-                    required
+                    defaultValue={job.type}
                     className="w-full rounded-md border px-3 py-2"
                   >
                     <option value="FULL_TIME">Full Time</option>
@@ -140,7 +147,7 @@ export default function CreateJobPopover({
                   </label>
                   <select
                     name="mode"
-                    required
+                    defaultValue={job.workMode}
                     className="w-full rounded-md border px-3 py-2"
                   >
                     <option value="ONSITE">Onsite</option>
@@ -155,6 +162,7 @@ export default function CreateJobPopover({
                   </label>
                   <select
                     name="level"
+                    defaultValue={job.level ?? ""}
                     className="w-full rounded-md border px-3 py-2"
                   >
                     <option value="">Any</option>
@@ -175,6 +183,7 @@ export default function CreateJobPopover({
                   <input
                     type="number"
                     name="paycheckMin"
+                    defaultValue={job.paycheckMin ?? ""}
                     className="w-full rounded-md border px-3 py-2"
                   />
                 </div>
@@ -186,12 +195,13 @@ export default function CreateJobPopover({
                   <input
                     type="number"
                     name="paycheckMax"
+                    defaultValue={job.paycheckMax ?? ""}
                     className="w-full rounded-md border px-3 py-2"
                   />
                 </div>
               </div>
 
-              {/* Expiration + Status */}
+              {/* Date + Status */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-1">
@@ -200,6 +210,11 @@ export default function CreateJobPopover({
                   <input
                     type="date"
                     name="expiredDate"
+                    defaultValue={
+                      job.expiresAt
+                        ? new Date(job.expiresAt).toISOString().split("T")[0]
+                        : ""
+                    }
                     className="w-full rounded-md border px-3 py-2"
                   />
                 </div>
@@ -210,6 +225,7 @@ export default function CreateJobPopover({
                   </label>
                   <select
                     name="status"
+                    defaultValue={job.status}
                     className="w-full rounded-md border px-3 py-2"
                   >
                     <option value="DRAFT">Draft</option>
@@ -235,10 +251,9 @@ export default function CreateJobPopover({
               <button
                 type="submit"
                 form="job-form"
-                disabled={isPending}
                 className="rounded-md bg-eduBlue px-5 py-2 text-sm text-white"
               >
-                {isPending ? "Creating..." : "Create Job"}
+                Update Job
               </button>
             </div>
           </div>

@@ -38,7 +38,7 @@ export default async function Page({ params }: PageProps) {
     <JobDetail
       job={job}
       applicationStatus={application?.status ?? null}
-      isAuthenticated={!!user}
+      user={user}
     />
   );
 }
