@@ -33,9 +33,9 @@ model User {
 model Profile {
   id             String   @id @default(uuid())
   pictureUrl     String?
+  name           String?
   bio            String?
   
-  name           String?
   dob            DateTime?
   gender         Gender?
 
@@ -223,6 +223,7 @@ model Certificate {
   id              String   @id @default(uuid())
   certificateCode String   @unique
   issuedAt        DateTime @default(now())
+  fileUrl         String   
 
   enrollmentId    String   @unique
   enrollment      Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
@@ -340,7 +341,7 @@ model Experience {
 
 model CV {
   id          String   @id @default(uuid())
-  template    String
+  fileUrl     String
   generatedAt DateTime @default(now())
 
   userId      String

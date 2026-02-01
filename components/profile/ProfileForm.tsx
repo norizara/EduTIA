@@ -33,6 +33,8 @@ export default function ProfileForm({
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(updateProfile, null);
   const [isFinishing, setIsFinishing] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [fileError, setFileError] = useState<string | null>(null);
   const loading = isPending || isFinishing;
 
   useEffect(() => {
@@ -48,19 +50,62 @@ export default function ProfileForm({
     return () => clearTimeout(t);
   }, [state, router, onCancel]);
 
+  const MAX_FILE_SIZE = 1 * 1024 * 1024;
+
   return (
     <form
       action={formAction}
+      encType="multipart/form-data"
       className="min-h-screen bg-linear-to-br from-slate-50 via-white to-blue-50/30"
     >
       <div className="bg-eduBlue">
         <div className="mx-auto max-w-7xl px-6 py-8 lg:px-8">
           <div className="flex flex-col sm:flex-row items-center gap-6">
-            <img
-              src={profile?.pictureUrl || "/avatars/male.svg"}
-              alt="Avatar"
-              className="h-24 w-24 sm:h-28 sm:w-28 rounded-full object-cover bg-white"
-            />
+            <div className="flex flex-col items-center gap-3">
+              <label className="relative cursor-pointer group">
+                <img
+                  src={preview || profile?.pictureUrl || "/avatars/male.svg"}
+                  alt="Avatar"
+                  className="h-28 w-28 rounded-full object-cover bg-white group-hover:opacity-80 transition"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 text-white text-sm font-medium opacity-100 transition rounded-full">
+                  Change
+                </div>
+
+                <input
+                  type="file"
+                  name="avatar"
+                  accept="image/png,image/jpeg,image/webp"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+
+                    setFileError(null);
+
+                    if (!file.type.startsWith("image/")) {
+                      alert("Only image files are allowed.");
+                      e.target.value = "";
+                      return;
+                    }
+
+                    if (file.size > MAX_FILE_SIZE) {
+                      setFileError("Image must be under 1MB");
+                      return;
+                    }
+
+                    const url = URL.createObjectURL(file);
+                    setPreview(url);
+                  }}
+                />
+              </label>
+
+              {fileError && (
+                <p className="text-sm text-red-500 mt-2">{fileError}</p>
+              )}
+
+              <p className="text-xs text-white">JPG / PNG · Max 1MB</p>
+            </div>
 
             <div className="flex-1 text-center sm:text-left">
               <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
@@ -85,8 +130,12 @@ export default function ProfileForm({
               </button>
               <button
                 type="submit"
-                disabled={loading}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold transition-all ${loading ? "bg-gray-300 text-gray-600 cursor-not-allowed" : "bg-white text-eduBlue hover:shadow-2xl"}`}
+                disabled={loading || !!fileError}
+                className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold transition-all ${
+                  loading || fileError
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-white text-eduBlue hover:shadow-2xl"
+                }`}
               >
                 {loading ? (
                   <>
@@ -185,21 +234,6 @@ export default function ProfileForm({
                       </div>
                     </div>
                     <div className="p-6 space-y-5">
-                      <FormField
-                        icon={<Image className="w-4 h-4" />}
-                        label="Profile Picture URL"
-                        iconBg="bg-violet-50"
-                        iconColor="text-violet-600"
-                      >
-                        <input
-                          type="text"
-                          name="pictureUrl"
-                          defaultValue={profile?.pictureUrl ?? ""}
-                          placeholder="https://example.com/your-photo.jpg"
-                          className="form-input"
-                        />
-                      </FormField>
-
                       <FormField
                         icon={<UserIcon className="w-4 h-4" />}
                         label="Full Name"

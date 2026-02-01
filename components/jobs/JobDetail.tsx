@@ -12,7 +12,7 @@ import {
   Banknote,
 } from "lucide-react";
 import { JobUI } from "@/types/job.ui";
-import { ApplicationStatus, User } from "@prisma/client";
+import { ApplicationStatus, User, Profile } from "@prisma/client";
 import BackButton from "../BackButton";
 import { applyJob } from "@/actions/applyJob";
 
@@ -20,12 +20,14 @@ interface JobDetailsProps {
   job: JobUI;
   applicationStatus: ApplicationStatus | null;
   user: User | null;
+  profile: Profile | null;
 }
 
 export default function JobDetail({
   job,
   applicationStatus,
   user,
+  profile,
 }: JobDetailsProps) {
   const renderApplyButton = () => {
     if (!user) {
@@ -246,8 +248,16 @@ export default function JobDetail({
 
             {user && user.role === "EDUCATEE" && (
               <div className="pt-4 border-t flex flex-col gap-3">
-                {renderApplyButton()}
-                {/* <form action={applyJob.bind(null, job.id, job.slug)}>
+                {!profile ||
+                !profile.name ||
+                !profile.gender ||
+                !profile.dob ? (
+                  <p className="text-sm text-red-500 font-medium">
+                    Please complete your profile first before applying.
+                  </p>
+                ) : (
+                  renderApplyButton()
+                  /* <form action={applyJob.bind(null, job.id, job.slug)}>
                 <button
                   type="submit"
                   className="w-full flex items-center justify-center gap-2 text-eduBlue hover:text-eduBlue/80 py-3 rounded-lg font-semibold"
@@ -255,7 +265,8 @@ export default function JobDetail({
                   <Bookmark className="w-5 h-5" />
                   Save Job
                 </button>
-              </form> */}
+              </form> */
+                )}
               </div>
             )}
           </div>

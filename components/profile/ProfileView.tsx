@@ -72,7 +72,10 @@ export default function ProfileView({
     return role.charAt(0) + role.slice(1).toLowerCase();
   };
 
-  const isProfileComplete =
+  const isEduProfileComplete =
+    !!profile?.name && !!profile?.dob && !!profile?.gender;
+
+  const isCompProfileComplete =
     !!profile?.name && !!profile?.companyAddress && !!profile?.companyWebsite;
 
   useEffect(() => {
@@ -114,9 +117,9 @@ export default function ProfileView({
                   <input type="hidden" name="userId" value={user.id} />
                   <button
                     type="submit"
-                    disabled={!isProfileComplete || isPending}
+                    disabled={!isCompProfileComplete || isPending}
                     className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold shadow-md hover:shadow-2xl transition-all duration-200 ${
-                      isProfileComplete && !isPending
+                      isCompProfileComplete && !isPending
                         ? "bg-white text-eduBlue"
                         : "bg-gray-300 text-gray-500 cursor-not-allowed"
                     }`}
@@ -163,12 +166,22 @@ export default function ProfileView({
       </div>
 
       <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
-        {user.role === "COMPANY" && !isProfileComplete && (
+        {user.role === "COMPANY" && !isCompProfileComplete && (
           <div className="mb-8 rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-800">
             <strong>Profile incomplete.</strong>
             <p className="mt-1">
               Please complete your company name, address, and website before
               requesting verification.
+            </p>
+          </div>
+        )}
+
+        {user.role === "EDUCATEE" && !isEduProfileComplete && (
+          <div className="mb-8 rounded-lg border border-yellow-300 bg-yellow-50 p-4 text-sm text-yellow-800">
+            <strong>Profile incomplete.</strong>
+            <p className="mt-1">
+              Please complete your name, gender, and date of birth before
+              getting certificate, generating CV, or applying job.
             </p>
           </div>
         )}

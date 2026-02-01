@@ -39,6 +39,7 @@ export default async function Page({ params }: PageProps) {
       job={job}
       applicationStatus={application?.status ?? null}
       user={user}
+      profile={user?.profile || null}
     />
   );
 }
