@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { CompanyVerification, Profile, User } from "@prisma/client";
+import {
+  CompanyVerification,
+  Experience,
+  Profile,
+  Skill,
+  User,
+} from "@prisma/client";
 import ProfileView from "./ProfileView";
 import ProfileForm from "./ProfileForm";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
@@ -9,6 +15,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 type ProfileContainerProps = {
   user: User;
   profile: Profile | null;
+  skills: Skill[];
+  experiences: Experience[];
   verification: CompanyVerification | null;
   totalEnrollments: number;
   completedEnrollments: number;
@@ -18,6 +26,8 @@ type ProfileContainerProps = {
 export default function ProfileContainer({
   user,
   profile,
+  skills,
+  experiences,
   verification,
   totalEnrollments,
   completedEnrollments,
@@ -59,6 +69,8 @@ export default function ProfileContainer({
     <ProfileView
       user={user}
       profile={profile}
+      skills={skills}
+      experiences={experiences}
       verification={verification}
       totalEnrollments={totalEnrollments}
       completedEnrollments={completedEnrollments}

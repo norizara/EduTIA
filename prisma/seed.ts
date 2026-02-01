@@ -62,7 +62,9 @@ async function main() {
       { userId: admin.id, gender: "MALE", bio: "Platform administrator" },
       {
         userId: student.id,
+        name: "Jane Doe",
         gender: "FEMALE",
+        dob: new Date(),
         pictureUrl: "/avatars/female.svg",
         bio: "Learner interested in technology",
       },
@@ -87,6 +89,36 @@ async function main() {
       status: "VERIFIED",
       verifiedAt: new Date(),
     },
+  });
+
+  // ===== SKILL & EXPERIENCE =====
+  await prisma.skill.createMany({
+    data: [
+      { userId: student.id, name: "JavaScript" },
+      { userId: student.id, name: "TypeScript" },
+      { userId: student.id, name: "React" },
+      { userId: student.id, name: "Node.js" },
+      { userId: student.id, name: "SQL" },
+    ],
+  });
+
+  await prisma.experience.createMany({
+    data: [
+      {
+        userId: student.id,
+        jobTitle: "Frontend Developer Intern",
+        companyName: "TechLabs Indonesia",
+        startDate: new Date("2023-01-01"),
+        endDate: new Date("2023-06-30"),
+      },
+      {
+        userId: student.id,
+        jobTitle: "Junior Web Developer",
+        companyName: "EduTech Startup",
+        startDate: new Date("2023-07-01"),
+        endDate: null, // still working
+      },
+    ],
   });
 
   // ===== CATEGORIES =====

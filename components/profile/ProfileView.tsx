@@ -1,7 +1,13 @@
 "use client";
 
 import { verifyCompany } from "@/actions/verify";
-import { CompanyVerification, Profile, User } from "@prisma/client";
+import {
+  CompanyVerification,
+  Profile,
+  User,
+  Skill,
+  Experience,
+} from "@prisma/client";
 import { useEffect, useActionState } from "react";
 import {
   User as UserIcon,
@@ -21,7 +27,11 @@ import {
   Rss,
   ListCheck,
   IdCard,
+  Briefcase,
 } from "lucide-react";
+import AddSkillPopover from "../AddSkillsPopover";
+import { addSkill, addExperience } from "@/actions/moreProfile";
+import AddExperiencePopover from "../AddExperiencesPopover";
 
 type ProfileViewProps = {
   profile: Profile | null;
@@ -30,6 +40,8 @@ type ProfileViewProps = {
   totalEnrollments: number;
   completedEnrollments: number;
   totalJobApplications: number;
+  skills: Skill[];
+  experiences: Experience[];
   onEdit: () => void;
   onIncompleteProfile: () => void;
 };
@@ -41,6 +53,8 @@ export default function ProfileView({
   totalEnrollments,
   completedEnrollments,
   totalJobApplications,
+  skills,
+  experiences,
   onEdit,
   onIncompleteProfile,
 }: ProfileViewProps) {
@@ -389,6 +403,91 @@ export default function ProfileView({
             )}
           </div>
         </div>
+
+        {user.role === "EDUCATEE" && (
+          <div className="mt-10 grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Skills */}
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+              <div className="px-6 py-4 border-b bg-slate-50 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-indigo-50 rounded-xl">
+                    <ListCheck className="w-5 h-5 text-indigo-600" />
+                  </div>
+                  <h2 className="text-lg font-semibold">Skills</h2>
+                </div>
+
+                <AddSkillPopover
+                  onAdd={async (name) => {
+                    await addSkill(name, user.id);
+                    window.location.reload();
+                  }}
+                />
+              </div>
+
+              <div className="p-6">
+                {skills.length ? (
+                  <div className="flex flex-wrap gap-2">
+                    {skills.map((skill) => (
+                      <span
+                        key={skill.id}
+                        className="px-3 py-1.5 rounded-full text-sm bg-blue-50 text-blue-700 font-medium"
+                      >
+                        {skill.name}
+                      </span>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-400 italic">No skills added yet</p>
+                )}
+              </div>
+            </div>
+
+            {/* Experience */}
+            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+              <div className="px-6 py-4 border-b bg-slate-50 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-50 rounded-xl">
+                    <Briefcase className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <h2 className="text-lg font-semibold">Work Experience</h2>
+                </div>
+
+                <AddExperiencePopover
+                  onAdd={async (data) => {
+                    await addExperience(data, user.id);
+                    window.location.reload();
+                  }}
+                />
+              </div>
+
+              <div className="p-6 space-y-6">
+                {experiences.length ? (
+                  experiences.map((exp) => (
+                    <div
+                      key={exp.id}
+                      className="border-b last:border-none pb-4"
+                    >
+                      <h3 className="font-semibold">{exp.jobTitle}</h3>
+                      <p className="text-sm text-slate-600">
+                        {exp.companyName}
+                      </p>
+                      <p className="text-xs text-slate-400 mt-1">
+                        {new Date(exp.startDate).toLocaleDateString()} —{" "}
+                        {exp.endDate
+                          ? new Date(exp.endDate).toLocaleDateString()
+                          : "Present"}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-slate-400 italic">
+                    No experience added yet
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

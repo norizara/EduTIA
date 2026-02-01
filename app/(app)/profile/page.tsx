@@ -34,6 +34,8 @@ export default async function ProfilePage() {
           id: true,
         },
       },
+      skills: true,
+      experiences: true,
     },
   });
 
@@ -45,6 +47,8 @@ export default async function ProfilePage() {
     <ProfileContainer
       user={userData}
       profile={userData.profile}
+      skills={userData.skills}
+      experiences={userData.experiences}
       verification={userData.profile?.verification ?? null}
       totalEnrollments={userData?._count.enrollments ?? 0}
       completedEnrollments={userData?.enrollments.length ?? 0}
