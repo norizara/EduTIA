@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { JobUI } from "@/types/job.ui";
-import { ExperienceLevel, JobType, WorkMode } from "@prisma/client";
 import {
   Building2,
   MapPin,
@@ -9,27 +8,6 @@ import {
   Briefcase,
   ArrowUpDown,
 } from "lucide-react";
-
-const WORK_MODE_LABELS: Record<WorkMode, string> = {
-  ONSITE: "On-site",
-  REMOTE: "Remote",
-  HYBRID: "Hybrid",
-};
-
-const JOB_TYPE_LABELS: Record<JobType, string> = {
-  FULL_TIME: "Full Time",
-  PART_TIME: "Part Time",
-  CONTRACT: "Contract",
-  FREELANCE: "Freelance",
-  INTERNSHIP: "Internship",
-};
-
-const EXPERIENCE_LEVEL_LABELS: Record<ExperienceLevel, string> = {
-  JUNIOR: "Junior",
-  MID: "Mid",
-  SENIOR: "Senior",
-  LEAD: "Lead",
-};
 
 export default function JobCard({
   job,
@@ -47,6 +25,10 @@ export default function JobCard({
       notation: "compact",
     }).format(amount);
   };
+
+  const salaryText = `${job.paycheckMin ? formatSalary(job.paycheckMin) : "…"} - ${
+    job.paycheckMax ? formatSalary(job.paycheckMax) : "…"
+  }`;
 
   return (
     <div className="group bg-white rounded-xl border border-slate-200 p-5 hover:shadow-lg transition-all duration-300 flex flex-col h-full hover:-translate-y-0.5">
@@ -83,12 +65,11 @@ export default function JobCard({
         </p>
 
         <div className="flex flex-wrap items-center gap-2 mt-auto pt-4 border-t border-slate-100">
-          {job.paycheckMin && job.paycheckMax && (
+          {(job.paycheckMin || job.paycheckMax) && (
             <div className="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100/50">
               <Banknote className="w-3.5 h-3.5" />
               <span className="text-xs font-semibold whitespace-nowrap">
-                {formatSalary(job.paycheckMin)} -{" "}
-                {formatSalary(job.paycheckMax)}
+                {salaryText}
               </span>
             </div>
           )}

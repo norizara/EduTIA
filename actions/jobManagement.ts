@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slugify";
 import { ExperienceLevel, JobStatus, JobType, WorkMode } from "@prisma/client";
 import { randomUUID } from "crypto";
+import { revalidatePath } from "next/cache";
 
 export async function createJobAction(_prevState: any, formData: FormData) {
   try {
@@ -48,23 +49,34 @@ export async function createJobAction(_prevState: any, formData: FormData) {
 
     const slug = `${slugify(title)}-${randomUUID().slice(0, 8)}`;
 
-    await prisma.jobPosting.create({
-      data: {
-        userId: user.id,
-        categoryId,
-        title,
-        slug,
-        description,
-        location,
-        status,
-        type,
-        workMode,
-        level,
-        paycheckMin,
-        paycheckMax,
-        expiresAt,
-      },
-    });
+    await prisma.$transaction([
+      prisma.jobPosting.create({
+        data: {
+          userId: user.id,
+          categoryId,
+          title,
+          slug,
+          description,
+          location,
+          status,
+          type,
+          workMode,
+          level,
+          paycheckMin,
+          paycheckMax,
+          expiresAt,
+        },
+      }),
+
+      prisma.profile.update({
+        where: { userId: user.id },
+        data: {
+          totalJobs: {
+            increment: 1,
+          },
+        },
+      }),
+    ]);
 
     return { success: true };
   } catch (error) {
@@ -158,15 +170,65 @@ export async function acceptApplication(appId: string): Promise<void> {
 
   if (!application) return;
   if (application.job.userId !== user.id) return;
+  if (application.status !== "REVIEWED") return;
+
+  await prisma.$transaction([
+    prisma.jobApplication.update({
+      where: { id: appId },
+      data: {
+        status: "ACCEPTED",
+        decidedAt: new Date(),
+      },
+    }),
+
+    prisma.profile.update({
+      where: { userId: user.id },
+      data: {
+        totalHired: { increment: 1 },
+      },
+    }),
+
+    prisma.jobPosting.update({
+      where: { id: application.jobId },
+      data: {
+        hired: { increment: 1 },
+      },
+    }),
+  ]);
+
+  revalidatePath(
+    `/company/jobs/${application.job.slug}/applications/${application.id}`,
+  );
+}
+
+export async function reviewApplication(appId: string): Promise<void> {
+  const user = await getCurrentUser();
+  if (!user || user.role !== "COMPANY") {
+    return;
+  }
+
+  const application = await prisma.jobApplication.findUnique({
+    where: { id: appId },
+    include: {
+      job: true,
+    },
+  });
+
+  if (!application) return;
+  if (application.job.userId !== user.id) return;
   if (application.status !== "APPLIED") return;
 
   await prisma.jobApplication.update({
     where: { id: appId },
     data: {
-      status: "ACCEPTED",
+      status: "REVIEWED",
       decidedAt: new Date(),
     },
   });
+
+  revalidatePath(
+    `/company/jobs/${application.job.slug}/applications/${application.id}`,
+  );
 }
 
 export async function rejectApplication(appId: string): Promise<void> {
@@ -193,4 +255,8 @@ export async function rejectApplication(appId: string): Promise<void> {
       decidedAt: new Date(),
     },
   });
+
+  revalidatePath(
+    `/company/jobs/${application.job.slug}/applications/${application.id}`,
+  );
 }

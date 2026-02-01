@@ -3,7 +3,6 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
 import UpdateJobPopover from "@/components/jobs/UpdateJob";
 import DeleteJobButton from "@/components/jobs/DeleteJob";
-import { AppActions } from "@/components/jobs/AppActions";
 import Link from "next/link";
 
 interface PageProps {
@@ -95,8 +94,11 @@ export default async function JobApplicantsPage({ params }: PageProps) {
                 </p>
               </div>
             </div>
-            <Link href={`/company/jobs/${job.slug}/applications/${app.id}`}>
-              View application detail
+            <Link
+              href={`/company/jobs/${job.slug}/applications/${app.id}`}
+              className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
+            >
+              View Application
             </Link>
           </div>
         ))}

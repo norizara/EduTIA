@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
-import { AppActions } from "@/components/jobs/AppActions";
+import { ReviewApp } from "@/components/jobs/ReviewApp";
+import { AcceptApp } from "@/components/jobs/AcceptApp";
 
 interface PageProps {
   params: {
@@ -144,7 +145,8 @@ export default async function ApplicantDetailPage({ params }: PageProps) {
           </div>
         )}
 
-        {application.status === "APPLIED" && <AppActions app={application} />}
+        {application.status === "APPLIED" && <ReviewApp app={application} />}
+        {application.status === "REVIEWED" && <AcceptApp app={application} />}
       </div>
     </div>
   );

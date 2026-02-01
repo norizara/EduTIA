@@ -270,7 +270,6 @@ model JobPosting {
   description String
   location    String?
 
-  views       Int @default(0)
   applicators Int @default(0)
   hired       Int @default(0)
 

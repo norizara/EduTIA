@@ -74,7 +74,7 @@ export default function JobDetail({
 
       default:
         return (
-          <form action={applyJob.bind(null, job.id, job.slug)}>
+          <form action={applyJob.bind(null, job.id)}>
             <button
               type="submit"
               className="w-full flex items-center justify-center gap-2 bg-eduBlue hover:bg-blue-700 text-white py-3 rounded-lg font-semibold"
@@ -165,9 +165,7 @@ export default function JobDetail({
         </div>
       </div>
 
-      {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {/* LEFT */}
         <div className="lg:col-span-2 space-y-8">
           <section className="bg-white rounded-xl border p-6">
             <h2 className="text-xl font-bold mb-4">Job Description</h2>
@@ -234,14 +232,8 @@ export default function JobDetail({
           </section>
         </div>
 
-        {/* RIGHT */}
         <div className="space-y-6">
           <div className="bg-white rounded-xl border p-6 space-y-4">
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Viewers</span>
-              <span className="font-semibold">{job.views}</span>
-            </div>
-
             <div className="flex justify-between text-sm">
               <span className="text-slate-500">Applicants</span>
               <span className="font-semibold">{job.applicators}</span>
@@ -252,9 +244,10 @@ export default function JobDetail({
               <span className="font-semibold">{job.hired}</span>
             </div>
 
-            <div className="pt-4 border-t flex flex-col gap-3">
-              {renderApplyButton()}
-              {/* <form action={applyJob.bind(null, job.id, job.slug)}>
+            {user && user.role === "EDUCATEE" && (
+              <div className="pt-4 border-t flex flex-col gap-3">
+                {renderApplyButton()}
+                {/* <form action={applyJob.bind(null, job.id, job.slug)}>
                 <button
                   type="submit"
                   className="w-full flex items-center justify-center gap-2 text-eduBlue hover:text-eduBlue/80 py-3 rounded-lg font-semibold"
@@ -263,7 +256,8 @@ export default function JobDetail({
                   Save Job
                 </button>
               </form> */}
-            </div>
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-xl border p-6 space-y-3">
