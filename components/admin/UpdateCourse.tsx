@@ -62,6 +62,8 @@ export default function UpdateCoursePopover({
               <h2 className="text-lg font-bold mb-4">Update Course</h2>
 
               <form action={formAction} className="space-y-3">
+                <input type="hidden" name="courseId" value={course.id} />
+
                 <p>
                   <b>Title:</b>
                 </p>
@@ -85,13 +87,12 @@ export default function UpdateCoursePopover({
                 />
 
                 <p>
-                  <b>Thumbnail URL:</b>
+                  <b>Thumbnail:</b>
                 </p>
                 <input
-                  name="thumbnailUrl"
-                  required
-                  defaultValue={course.thumbnailUrl}
-                  placeholder="Thumbnail URL"
+                  type="file"
+                  name="thumbnail"
+                  accept="image/*"
                   className="w-full rounded border p-2"
                 />
 
