@@ -31,16 +31,12 @@ import {
   Trash2,
 } from "lucide-react";
 import AddSkillPopover from "../AddSkillsPopover";
-import {
-  addSkill,
-  addExperience,
-  deleteSkill,
-  updateSkill,
-} from "@/actions/moreProfile";
+import { addSkill, addExperience, deleteSkill } from "@/actions/moreProfile";
 import AddExperiencePopover from "../AddExperiencesPopover";
 import ExperienceActions from "./ExperienceAction";
 import EditSkillPopover from "./EditSkillPopover";
 import ConfirmDialog from "../ui/ConfirmDialog";
+import { generateUserCV } from "@/actions/generateCV";
 
 type ProfileViewProps = {
   profile: Profile | null;
@@ -70,6 +66,7 @@ export default function ProfileView({
   const [state, formAction, isPending] = useActionState(verifyCompany, null);
   const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
   const [skillToEdit, setSkillToEdit] = useState<Skill | null>(null);
+  const [isGeneratingCV, setIsGeneratingCV] = useState(false);
 
   const websiteUrl = profile?.companyWebsite
     ? profile.companyWebsite.startsWith("http")
@@ -536,6 +533,28 @@ export default function ProfileView({
               </div>
             </div>
           </div>
+        )}
+        {user.role === "EDUCATEE" && isEduProfileComplete && (
+          <button
+            disabled={!isEduProfileComplete || isGeneratingCV}
+            onClick={async () => {
+              try {
+                setIsGeneratingCV(true);
+                const url = await generateUserCV();
+                window.open(url, "_blank");
+              } finally {
+                setIsGeneratingCV(false);
+              }
+            }}
+            className={`w-full mt-4 flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-semibold transition
+      ${
+        isEduProfileComplete
+          ? "bg-eduBlue text-white hover:bg-blue-700"
+          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+      }`}
+          >
+            {isGeneratingCV ? "Generating CV..." : "Download CV"}
+          </button>
         )}
       </div>
     </div>

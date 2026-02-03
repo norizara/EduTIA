@@ -24,7 +24,7 @@ export default function ExperienceActions({ exp }: { exp: any }) {
         {menuOpen && (
           <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-md z-20">
             <button
-              onClick={() => {
+              onClick={() => {  
                 setEditOpen(true);
                 setMenuOpen(false);
               }}

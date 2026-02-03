@@ -5,6 +5,7 @@ import {
   View,
   StyleSheet,
   renderToStream,
+  Image,
 } from "@react-pdf/renderer";
 import fs from "fs";
 import path from "path";
@@ -24,71 +25,183 @@ export async function generatePdfCertificate(enrollmentId: string) {
     throw new Error("Invalid enrollment");
   }
 
-  const code = `CERT-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-  const filename = `certificate-${code}.pdf`;
+  const certificateId = `CERT-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+  const filename = `certificate-${certificateId}.pdf`;
 
   const dir = path.join(process.cwd(), "public/uploads/certificates");
   fs.mkdirSync(dir, { recursive: true });
-
   const filePath = path.join(dir, filename);
+
+  const logoPath = path.join(process.cwd(), "public/logo/blue.png");
+  const logoBase64 = fs.readFileSync(logoPath).toString("base64");
+  const logoSrc = `data:image/png;base64,${logoBase64}`;
 
   const styles = StyleSheet.create({
     page: {
-      padding: 50,
-      textAlign: "center",
-      fontSize: 14,
+      padding: 28,
+      backgroundColor: "#ffffff",
     },
+
+    outerBorder: {
+      border: "3 solid #c7d2fe",
+      padding: 8,
+    },
+
+    innerBorder: {
+      border: "2 solid #bfdbfe",
+      paddingVertical: 60,
+      paddingHorizontal: 48,
+      alignItems: "center",
+      textAlign: "center",
+      backgroundColor: "#fafafa",
+    },
+
     title: {
+      fontSize: 40,
+      fontFamily: "Times-Bold",
+      letterSpacing: 2,
+      marginBottom: 6,
+      textTransform: "uppercase",
+      color: "#0f172a",
+    },
+
+    subtitle: {
+      fontSize: 14,
+      letterSpacing: 4,
+      color: "#64748b",
+      marginBottom: 50,
+      textTransform: "uppercase",
+    },
+
+    italicText: {
+      fontSize: 14,
+      fontStyle: "italic",
+      color: "#64748b",
+    },
+
+    name: {
       fontSize: 32,
-      fontWeight: "bold",
+      fontFamily: "Times-Bold",
+      color: "#2563eb",
+      marginTop: 16,
       marginBottom: 10,
     },
-    subtitle: {
-      fontSize: 18,
-      letterSpacing: 2,
-      marginBottom: 40,
+
+    underline: {
+      width: 260,
+      height: 1,
+      backgroundColor: "#e5e7eb",
+      marginBottom: 30,
     },
-    name: {
-      fontSize: 28,
-      fontWeight: "bold",
-      marginVertical: 20,
-    },
+
     course: {
-      fontSize: 20,
-      marginVertical: 10,
+      fontSize: 24,
+      fontFamily: "Times-Bold",
+      marginTop: 10,
+      color: "#1e293b",
     },
-    footer: {
-      marginTop: 50,
-      fontSize: 12,
+
+    footerRow: {
+      marginTop: 70,
+      width: "100%",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
     },
-    box: {
-      border: "4 solid #1e40af",
-      padding: 30,
+
+    dateBlock: {
+      textAlign: "center",
     },
+
+    dateText: {
+      fontSize: 14,
+      fontFamily: "Times-Bold",
+    },
+
+    dateLabel: {
+      fontSize: 9,
+      letterSpacing: 1,
+      color: "#94a3b8",
+      marginTop: 4,
+      textTransform: "uppercase",
+    },
+
+    medalBlock: {
+      alignItems: "center",
+    },
+
+    medalCircle: {
+      width: 70,
+      height: 70,
+      borderRadius: 35,
+      border: "3 solid #bfdbfe",
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: "#ffffff",
+    },
+
+    medalIcon: {
+      fontSize: 26,
+    },
+
+    certId: {
+      fontSize: 9,
+      marginTop: 8,
+      color: "#94a3b8",
+      fontFamily: "Courier",
+    },
+
+    logo: {
+      width: 90,
+      height: 32,
+    },
+  });
+
+  const issuedDate = new Date().toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
   });
 
   const pdf = (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={styles.box}>
-          <Text style={styles.title}>Certificate</Text>
-          <Text style={styles.subtitle}>OF COMPLETION</Text>
+        <View style={styles.outerBorder}>
+          <View style={styles.innerBorder}>
+            <Text style={styles.title}>Certificate</Text>
+            <Text style={styles.subtitle}>Of Completion</Text>
 
-          <Text>This certifies that</Text>
+            <Text style={styles.italicText}>This certifies that</Text>
 
-          <Text style={styles.name}>
-            {enrollment.user.profile?.name || enrollment.user.email}
-          </Text>
+            <Text style={styles.name}>
+              {enrollment.user.profile?.name || enrollment.user.email}
+            </Text>
 
-          <Text>has successfully completed the course</Text>
+            <View style={styles.underline} />
 
-          <Text style={styles.course}>{enrollment.course.title}</Text>
+            <Text style={styles.italicText}>
+              has successfully completed the course
+            </Text>
 
-          <Text style={styles.footer}>
-            Issued on {new Date().toDateString()}
-          </Text>
+            <Text style={styles.course}>{enrollment.course.title}</Text>
 
-          <Text style={styles.footer}>Certificate ID: {code}</Text>
+            {/* Footer */}
+            <View style={styles.footerRow}>
+              <View style={styles.dateBlock}>
+                <Text style={styles.dateText}>{issuedDate}</Text>
+                <Text style={styles.dateLabel}>Date Issued</Text>
+              </View>
+
+              <View style={styles.medalBlock}>
+                <View style={styles.medalCircle}>
+                  <Text style={styles.medalIcon}>🎓</Text>
+                </View>
+                <Text style={styles.certId}>ID: {certificateId}</Text>
+              </View>
+
+              <Image src={logoSrc} style={styles.logo} />
+            </View>
+          </View>
         </View>
       </Page>
     </Document>
@@ -104,7 +217,7 @@ export async function generatePdfCertificate(enrollmentId: string) {
 
   return prisma.certificate.create({
     data: {
-      certificateCode: code,
+      certificateCode: certificateId,
       fileUrl: `/uploads/certificates/${filename}`,
       enrollment: {
         connect: { id: enrollmentId },
