@@ -1,5 +1,8 @@
 "use server";
 
+import fs from "fs";
+import path from "path";
+import crypto from "crypto";
 import { requireAdminUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { slugify } from "@/lib/slugify";
@@ -46,19 +49,40 @@ export async function updateCourseAction(_prev: any, formData: FormData) {
   try {
     const admin = await requireAdminUser();
 
+    const courseId = formData.get("courseId") as string;
     const title = formData.get("title") as string;
     const description = formData.get("description") as string;
-    const thumbnailUrl = formData.get("thumbnailUrl") as string;
     const categoryId = formData.get("categoryId") as string;
     const level = formData.get("level") as CourseLevel;
     const isPublished = formData.get("isPublished") === "true";
+    const file = formData.get("thumbnail") as File | null;
+    let thumbnailUrl: string | undefined;
+
+    if (!courseId) {
+      return { error: "Course ID missing" };
+    }
+
+    if (file && file.size > 0) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const ext = file.name.split(".").pop();
+
+      const filename = `course-${crypto.randomUUID()}.${ext}`;
+      const uploadDir = path.join(process.cwd(), "public/uploads/courses");
+
+      fs.mkdirSync(uploadDir, { recursive: true });
+
+      const filePath = path.join(uploadDir, filename);
+      fs.writeFileSync(filePath, buffer);
+
+      thumbnailUrl = `/uploads/courses/${filename}`;
+    }
 
     if (!title || !description || !categoryId || !level) {
       return { error: "All fields are required" };
     }
 
     const existingCourse = await prisma.course.findUnique({
-      where: { slug: slugify(title) },
+      where: { id: courseId },
       select: { isPublished: true },
     });
 
@@ -69,15 +93,15 @@ export async function updateCourseAction(_prev: any, formData: FormData) {
     const isPublishing = !existingCourse.isPublished && isPublished === true;
 
     await prisma.course.update({
-      where: { slug: slugify(title) },
+      where: { id: courseId },
       data: {
         title,
         slug: slugify(title),
         description,
         level,
-        thumbnailUrl,
         isPublished,
         categoryId,
+        ...(thumbnailUrl && { thumbnailUrl }),
       },
     });
 

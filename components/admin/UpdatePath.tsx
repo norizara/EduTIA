@@ -75,13 +75,12 @@ export default function UpdatePathPopover({ path }: { path: PathUI }) {
                 />
 
                 <p>
-                  <b>Thumbnail URL:</b>
+                  <b>Thumbnail:</b>
                 </p>
                 <input
-                  name="thumbnailUrl"
-                  required
-                  defaultValue={path.thumbnailUrl}
-                  placeholder="Thumbnail URL"
+                  type="file"
+                  name="thumbnail"
+                  accept="image/*"
                   className="w-full rounded border p-2"
                 />
 
