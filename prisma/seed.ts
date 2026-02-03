@@ -104,9 +104,14 @@ async function main() {
   const categoryNames = [
     "Data & AI",
     "Software Development",
-    "Design & Creative",
     "IT & Infrastructure",
+    "Design & Creative",
+    "Product Management",
     "Business & Management",
+    "Marketing & Digital Marketing",
+    "Finance & Accounting",
+    "Human Resources",
+    "Operations & Administration",
   ];
 
   await prisma.category.createMany({
@@ -385,12 +390,30 @@ async function main() {
   });
 
   /* ===================== JOB CATEGORY ===================== */
-  const jobCat = await prisma.jobCategory.create({
-    data: {
-      name: "Data & AI",
-      slug: slugify("Data & AI"),
-    },
+  const jobCategoryNames = [
+    "Data & AI",
+    "Software Development",
+    "IT & Infrastructure",
+    "Product Management",
+    "Design & Creative",
+    "Marketing & Sales",
+    "Finance & Accounting",
+    "Human Resources",
+    "Operations",
+    "Customer Support",
+  ];
+
+  await prisma.jobCategory.createMany({
+    data: jobCategoryNames.map((name) => ({
+      name,
+      slug: slugify(name),
+    })),
   });
+
+  const jobCategories = await prisma.jobCategory.findMany();
+  const jobCategoryBySlug = Object.fromEntries(
+    jobCategories.map((c) => [c.slug, c]),
+  );
 
   /* ===================== JOB POSTING ===================== */
   const job = await prisma.jobPosting.create({
@@ -405,9 +428,8 @@ async function main() {
       level: "JUNIOR",
       paycheckMin: 5000000,
       paycheckMax: 7000000,
-      categoryId: jobCat.id,
+      categoryId: jobCategoryBySlug[slugify("Data & AI")].id,
       userId: company.id,
-      expiresAt: new Date(Date.now() + 30 * 86400000),
     },
   });
 
