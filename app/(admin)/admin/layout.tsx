@@ -1,5 +1,6 @@
 import { requireAdminUser } from "@/lib/auth";
 import Link from "next/link";
+import LogoutButton from "@/components/admin/LogoutButton";
 
 export default async function AdminLayout({
   children,
@@ -22,6 +23,9 @@ export default async function AdminLayout({
               <Link href="/admin/courses" className="block hover:underline">
                 Courses
               </Link>
+              <Link href="/admin/paths" className="block hover:underline">
+                Learning Paths
+              </Link>
               <Link href="/admin/users" className="block hover:underline">
                 Users
               </Link>
@@ -30,13 +34,7 @@ export default async function AdminLayout({
               </Link>
             </nav>
           </div>
-
-          <Link
-            href="/"
-            className="block hover:underline text-sm text-gray-300"
-          >
-            Back to client side
-          </Link>
+          <LogoutButton />
         </div>
       </aside>
 

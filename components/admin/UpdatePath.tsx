@@ -1,25 +1,15 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
-import { updateCourseAction } from "@/actions/courseAdmin";
-import { CategoryUI } from "@/types/category.ui";
 import { useRouter } from "next/navigation";
-import { CourseAdmin } from "@/types/course.ui";
+import { PathDetailUI, PathUI } from "@/types/path.ui";
+import { updatePathAction } from "@/actions/pathAdmin";
 
-export default function UpdateCoursePopover({
-  path: course,
-  categories,
-}: {
-  path: CourseAdmin;
-  categories: CategoryUI[];
-}) {
+export default function UpdatePathPopover({ path }: { path: PathUI }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const [state, formAction, isPending] = useActionState(
-    updateCourseAction,
-    null,
-  );
+  const [state, formAction, isPending] = useActionState(updatePathAction, null);
 
   useEffect(() => {
     if (state?.success) {
@@ -47,7 +37,7 @@ export default function UpdateCoursePopover({
         onClick={() => setOpen(true)}
         className="p-2 bg-gray-200 text-black rounded-md text-xs w-25"
       >
-        Update Course
+        Update Path
       </button>
 
       {open && (
@@ -59,7 +49,7 @@ export default function UpdateCoursePopover({
 
           <div className="relative z-10 w-full max-w-md max-h-[90vh] overflow-hidden rounded-xl bg-white shadow-xl">
             <div className="p-6 overflow-y-auto max-h-[90vh]">
-              <h2 className="text-lg font-bold mb-4">Update Course</h2>
+              <h2 className="text-lg font-bold mb-4">Update Path</h2>
 
               <form action={formAction} className="space-y-3">
                 <p>
@@ -68,8 +58,8 @@ export default function UpdateCoursePopover({
                 <input
                   name="title"
                   required
-                  defaultValue={course.title}
-                  placeholder="Course title"
+                  defaultValue={path.title}
+                  placeholder="Path title"
                   className="w-full rounded border p-2"
                 />
 
@@ -79,7 +69,7 @@ export default function UpdateCoursePopover({
                 <input
                   name="description"
                   required
-                  defaultValue={course.description}
+                  defaultValue={path.description}
                   placeholder="Description"
                   className="w-full rounded border p-2"
                 />
@@ -90,61 +80,21 @@ export default function UpdateCoursePopover({
                 <input
                   name="thumbnailUrl"
                   required
-                  defaultValue={course.thumbnailUrl}
+                  defaultValue={path.thumbnailUrl}
                   placeholder="Thumbnail URL"
                   className="w-full rounded border p-2"
                 />
 
                 <p>
-                  <b>Category:</b>
-                </p>
-                <select
-                  name="categoryId"
-                  required
-                  defaultValue={course.category.id}
-                  className="w-full rounded border p-2"
-                >
-                  <option value="">Select category</option>
-                  {categories.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-
-                <p>
-                  <b>Level:</b>
-                </p>
-                <select
-                  name="level"
-                  required
-                  defaultValue={course.level}
-                  className="w-full rounded border p-2"
-                >
-                  <option value="">Select level</option>
-                  <option value="BEGINNER">Beginner</option>
-                  <option value="INTERMEDIATE">Intermediate</option>
-                  <option value="ADVANCED">Advanced</option>
-                </select>
-
-                <p>
-                  <b>Course Items:</b>
+                  <b>Path Items:</b>
                 </p>
                 <div className="space-y-2">
-                  {course.items.map((i) => (
+                  {path.items.map((i) => (
                     <div
                       key={i.id}
-                      className="grid grid-cols-[70px_1fr_45px] items-center gap-3 w-full"
+                      className="grid grid-cols-[1fr_45px] items-center gap-3 w-full"
                     >
-                      <span className="text-xs font-semibold text-gray-600">
-                        {i.type}
-                      </span>
-
-                      <span className="text-sm truncate">
-                        {i.type === "MODULE"
-                          ? i.module?.title
-                          : i.workshop?.title}
-                      </span>
+                      <span className="text-sm truncate">{i.course.title}</span>
 
                       <input
                         name={`position_${i.id}`}
@@ -163,7 +113,7 @@ export default function UpdateCoursePopover({
                 <select
                   name="isPublished"
                   required
-                  defaultValue={course.isPublished ? "true" : "false"}
+                  defaultValue={path.isPublished ? "true" : "false"}
                   className="w-full rounded border p-2"
                 >
                   <option value="true">Published</option>

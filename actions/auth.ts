@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function loginAction(_prevState: any, formData: FormData) {
   try {
@@ -60,8 +61,7 @@ export async function loginAction(_prevState: any, formData: FormData) {
 export async function logoutAction() {
   const cookieStore = await cookies();
   cookieStore.delete("token");
-
-  return { success: true };
+  redirect("/");
 }
 
 export async function signupAction(_prevState: any, formData: FormData) {

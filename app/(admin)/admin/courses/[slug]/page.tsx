@@ -42,7 +42,7 @@ export default async function AdminCourseDetail({
       </Link>
       <h1 className="text-2xl font-bold">{course.title}</h1>
       <div className="flex gap-3">
-        <UpdateCoursePopover course={course} categories={categories} />
+        <UpdateCoursePopover path={course} categories={categories} />
         <DeleteCourseButton courseId={course.id} />
       </div>
       <div>

@@ -22,18 +22,22 @@ export default async function CompanyDashboard() {
 
   if (!profile?.verification || profile.verification.status !== "VERIFIED") {
     return (
-      <div className="max-w-3xl mx-auto mt-16 text-center space-y-4 min-h-screen">
-        <h1 className="text-2xl font-bold">Company Not Verified</h1>
-        <p className="text-gray-600">
-          You must verify your company before posting jobs.
-        </p>
+      <div className="min-h-screen flex items-center justify-center px-6">
+        <div className="max-w-md text-center space-y-4">
+          <h1 className="text-2xl font-bold text-slate-900">
+            Company Not Verified
+          </h1>
+          <p className="text-slate-600">
+            You must verify your company before posting jobs.
+          </p>
 
-        <Link
-          href="/profile"
-          className="inline-block px-6 py-2 rounded-md bg-blue-600 text-white"
-        >
-          Verify Company
-        </Link>
+          <Link
+            href="/profile"
+            className="inline-flex items-center justify-center rounded-lg bg-eduBlue px-6 py-2 text-white font-medium hover:bg-blue-700"
+          >
+            Verify Company
+          </Link>
+        </div>
       </div>
     );
   }
@@ -71,44 +75,68 @@ export default async function CompanyDashboard() {
   const hiredCount = jobs.reduce((sum, job) => sum + job.hired, 0);
 
   return (
-    <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <h1 className="text-3xl font-bold">Company Dashboard</h1>
+    <div className="max-w-7xl mx-auto px-6 py-10 space-y-10 min-h-screen">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold text-slate-900">
+            Company Dashboard
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            Manage your job postings and applicants
+          </p>
+        </div>
 
-      <div className="grid grid-cols-3 gap-4">
+        <CreateJobPopover categories={jobCategories} />
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <Stat label="Jobs Posted" value={jobs.length} />
         <Stat label="Applicants" value={totalApplicants} />
         <Stat label="Hired" value={hiredCount} />
       </div>
 
-      <div className="bg-white rounded-xl border">
-        <div className="p-4 font-semibold border-b shadow flex justify-between items-center">
-          <p>Your Job Posts</p>
-          <CreateJobPopover categories={jobCategories} />
+      <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+        <div className="px-6 py-4 bg-slate-50 flex items-center justify-between">
+          <h2 className="font-semibold text-slate-800">Your Job Posts</h2>
+          <span className="text-sm text-slate-500">{jobs.length} total</span>
         </div>
-        <div className="divide-y">
-          {jobs.map((job) => (
-            <div key={job.id} className="p-4 flex justify-between items-center">
-              <div>
-                <p className="font-medium">
-                  {job.title}{" "}
-                  <span className="text-gray-500">
-                    {job.status === "DRAFT" && "| DRAFT"}
-                  </span>
-                </p>
-                <p className="text-sm text-gray-500">
-                  {job._count.applications} applicants
-                </p>
-              </div>
 
-              <Link
-                href={`/company/jobs/${job.slug}`}
-                className="text-blue-600 text-sm font-medium"
+        {jobs.length ? (
+          <div className="divide-y">
+            {jobs.map((job) => (
+              <div
+                key={job.id}
+                className="px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition"
               >
-                View →
-              </Link>
-            </div>
-          ))}
-        </div>
+                <div className="space-y-1">
+                  <p className="font-medium text-slate-900">
+                    {job.title}
+                    {job.status === "DRAFT" && (
+                      <span className="ml-2 text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">
+                        Draft
+                      </span>
+                    )}
+                  </p>
+
+                  <p className="text-sm text-slate-500">
+                    {job._count.applications} applicants
+                  </p>
+                </div>
+
+                <Link
+                  href={`/company/jobs/${job.slug}`}
+                  className="text-sm font-medium text-eduBlue hover:underline"
+                >
+                  View →
+                </Link>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="p-10 text-center text-slate-500">
+            No job postings yet.
+          </div>
+        )}
       </div>
     </div>
   );
@@ -116,9 +144,9 @@ export default async function CompanyDashboard() {
 
 function Stat({ label, value }: { label: string; value: number }) {
   return (
-    <div className="bg-white border rounded-xl p-4">
-      <p className="text-sm text-gray-500">{label}</p>
-      <p className="text-2xl font-bold">{value}</p>
+    <div className="bg-white border border-slate-200 rounded-2xl p-6">
+      <p className="text-sm text-slate-500">{label}</p>
+      <p className="mt-1 text-3xl font-bold text-slate-900">{value}</p>
     </div>
   );
 }
