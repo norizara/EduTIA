@@ -13,7 +13,7 @@ export function AcceptApp({ app }: { app: any }) {
 
       <form action={rejectApplication.bind(null, app.id)}>
         <button
-          disabled={app.status !== "APPLIED"}
+          disabled={app.status !== "REVIEWED"}
           className="px-4 py-2 rounded-md bg-red-500 text-white text-sm hover:bg-red-600 disabled:opacity-50"
         >
           Reject

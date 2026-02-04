@@ -80,7 +80,7 @@ export async function createJobAction(_prevState: any, formData: FormData) {
 
     return { success: true };
   } catch (error) {
-    console.error("Create job error:", error);
+    console.error("Post job error:", error);
     return { error: "Something went wrong" };
   }
 }

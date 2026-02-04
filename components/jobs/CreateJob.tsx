@@ -35,7 +35,7 @@ export default function CreateJobPopover({
         onClick={() => setOpen(true)}
         className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition"
       >
-        Create Job
+        Post Job
       </button>
 
       {open && (
@@ -43,7 +43,7 @@ export default function CreateJobPopover({
           <div className="relative w-full max-w-xl max-h-[90vh] rounded-xl bg-white shadow-xl flex flex-col">
             {/* Header */}
             <div className="shrink-0 border-b px-6 py-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Create Job</h2>
+              <h2 className="text-lg font-semibold">Post a Job</h2>
               <button
                 onClick={() => setOpen(false)}
                 className="text-gray-400 hover:text-gray-600"
@@ -238,7 +238,7 @@ export default function CreateJobPopover({
                 disabled={isPending}
                 className="rounded-md bg-eduBlue px-5 py-2 text-sm text-white"
               >
-                {isPending ? "Creating..." : "Create Job"}
+                {isPending ? "Posting..." : "Post Job"}
               </button>
             </div>
           </div>
