@@ -2,28 +2,44 @@
 
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/auth";
+import { Gender } from "@prisma/client";
 
 export async function updateProfile(_: any, formData: FormData) {
   const user = await requireUser();
 
-  const pictureUrl = formData.get("pictureUrl")?.toString() || null;
+  const rawGender = formData.get("gender")?.toString();
+  const providedPictureUrl = formData.get("pictureUrl")?.toString();
+
+  const gender: Gender | null =
+    rawGender === "MALE"
+      ? Gender.MALE
+      : rawGender === "FEMALE"
+        ? Gender.FEMALE
+        : null;
+
+  const pictureUrl =
+    providedPictureUrl ||
+    (gender === Gender.FEMALE
+      ? "/avatars/female.svg"
+      : gender === Gender.MALE
+        ? "/avatars/male.svg"
+        : null);
+
+  const profileData = {
+    name: formData.get("name")?.toString(),
+    bio: formData.get("bio")?.toString(),
+    companyWebsite: formData.get("companyWebsite")?.toString(),
+    companyAddress: formData.get("companyAddress")?.toString(),
+    gender,
+    pictureUrl,
+  };
 
   await prisma.profile.upsert({
     where: { userId: user.id },
-    update: {
-      name: formData.get("name")?.toString(),
-      bio: formData.get("bio")?.toString(),
-      companyWebsite: formData.get("companyWebsite")?.toString(),
-      companyAddress: formData.get("companyAddress")?.toString(),
-      pictureUrl,
-    },
+    update: profileData,
     create: {
       userId: user.id,
-      name: formData.get("name")?.toString(),
-      bio: formData.get("bio")?.toString(),
-      companyWebsite: formData.get("companyWebsite")?.toString(),
-      companyAddress: formData.get("companyAddress")?.toString(),
-      pictureUrl,
+      ...profileData,
     },
   });
 

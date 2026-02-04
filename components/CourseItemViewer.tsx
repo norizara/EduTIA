@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   CheckCircle,
   ChevronLeft,
@@ -10,7 +8,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import BackButton from "./BackButton";
-import { handleMark } from "@/actions/markItem";
+import { handleMark, handleSubmitWorkshop } from "@/actions/markItem";
 
 interface CourseItemViewerProps {
   item: {
@@ -40,7 +38,8 @@ interface CourseItemViewerProps {
 export default function CourseItemViewer({
   item,
   courseSlug,
-  isCompleted: isCompleted,
+  isCompleted,
+  submission,
   prevItem,
   nextItem,
 }: CourseItemViewerProps) {
@@ -133,6 +132,7 @@ export default function CourseItemViewer({
         {item.type === "WORKSHOP" && item.workshop && (
           <div className="p-0">
             <div className="p-8 space-y-8">
+              {/* Instructions */}
               <div className="prose prose-slate max-w-none">
                 <h3 className="text-lg font-bold text-slate-900 mb-4">
                   Instructions
@@ -141,21 +141,64 @@ export default function CourseItemViewer({
                   {item.workshop.instructions}
                 </div>
               </div>
-            </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-end">
-              <form action={handleMark}>
-                <input type="hidden" name="courseItemId" value={item.id} />
+              {submission ? (
+                <div className="rounded-xl border border-slate-200 bg-white p-6 space-y-4">
+                  <h4 className="font-bold text-slate-900">Your Submission</h4>
 
-                <button
-                  type="submit"
-                  className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold ${
-                    isCompleted ? "bg-white border" : "bg-blue-600 text-white"
-                  }`}
+                  <a
+                    href={submission.submissionUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-blue-600 font-medium hover:underline"
+                  >
+                    View Submission <ExternalLink className="w-4 h-4" />
+                  </a>
+
+                  <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-4 space-y-2">
+                    <p className="font-bold text-emerald-700">
+                      Score: {submission.score}
+                    </p>
+
+                    {submission.feedback && (
+                      <p className="text-slate-700 text-sm">
+                        {submission.feedback}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <form
+                  action={handleSubmitWorkshop}
+                  className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 space-y-4"
                 >
-                  {isCompleted ? "Mark as Incomplete" : "Mark as Complete"}
-                </button>
-              </form>
+                  <input type="hidden" name="courseItemId" value={item.id} />
+
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-1">
+                      Submission URL
+                    </label>
+                    <input
+                      type="url"
+                      name="submissionUrl"
+                      required
+                      placeholder="https://github.com/your-repo or Colab link"
+                      className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition-colors"
+                  >
+                    Submit Workshop
+                  </button>
+
+                  <p className="text-xs text-slate-500">
+                    This workshop will be auto-graded with a score of 100.
+                  </p>
+                </form>
+              )}
             </div>
           </div>
         )}

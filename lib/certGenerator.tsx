@@ -152,8 +152,8 @@ export async function generatePdfCertificate(enrollmentId: string) {
     },
 
     logo: {
-      width: 90,
-      height: 32,
+      width: "auto",
+      height: 25,
     },
   });
 

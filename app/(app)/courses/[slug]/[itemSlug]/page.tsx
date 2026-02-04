@@ -126,13 +126,13 @@ export default async function CourseItemPage({ params }: PageProps) {
     },
   });
 
+  const submission =
+    item.type === "WORKSHOP" ? item.workshop?.submissions[0] : null;
+
   const isCompleted =
     item.type === "MODULE"
       ? !!item.module?.progresses?.[0]?.completedAt
-      : (item.workshop?.submissions.length ?? 0) > 0;
-
-  const submission =
-    item.type === "WORKSHOP" ? item.workshop?.submissions[0] : null;
+      : submission?.score != null;
 
   const title = item.module?.title ?? item.workshop?.title ?? "Untitled";
 
